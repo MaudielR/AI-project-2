@@ -1,9 +1,17 @@
+#If a piece is move into a square containing one of the opponent's
+# pieces then they do battle. If a hero battles a wumpus then the her shoots the wumpus
+# and kills it. If a mage does battle with a hero then it uses its fire magic to destroy the hero.
+# If a wumpus does battle with a mage then the wumpus will eat the mage. If two pieces of
+# the same type do battle then both pieces are destroyed.
+
 import math
 import random
 
 from pip._vendor.distlib.compat import raw_input
 
+def OnePieceBattle( ): 
 
+  
 def buildGrid(D):
     # Grid size is DxD
     # EE is Empty and TT is for Pit
@@ -87,12 +95,28 @@ def move(cords, grid, D, user):
             temp = grid[cR][cC]
             grid[nR][nC] = temp[1:] + " "
         else:
+
             grid[nR][nC] = grid[cR][cC]
 
-    if list(grid[cR][cC])[0] == "T":
-        grid[cR][cC] = "T" + user + " "
-    else:
-        grid[cR][cC] = "EE "
+        if list(grid[cR][cC])[0] == "T":
+            grid[cR][cC] = "T" + user + " "
+        else:
+            grid[cR][cC] = "EE "
+  #this will be where we will call combat 
+#---------------------------------------------------
+        if list(grid[cR][cC])[0] == "PH" and next[0] =="AW":
+            temp = grid[cR][cC]
+            grid[nR][nC] = temp[1:] + " "
+        if list(grid[cR][cC])[0] == "TP" and next[0] =="AH":
+            temp = grid[cR][cC]
+            grid[nR][nC] = temp[1:] + " "
+        if list(grid[cR][cC])[0] == "PW" and next[0] =="AM":
+            temp = grid[cR][cC]
+            grid[nR][nC] = temp[1:] + " "
+        if (list(grid[cR][cC])[0] == "TP" and next[0] =="AM") or (list(grid[cR][cC])[0] == "PH" and next[0] =="AH") or (list(grid[cR][cC])[0] == "PW" and next[0] =="AW"):
+            grid[cR][cC] == "EE"
+            grid[nR][nC] = grid[cR][cC][1:] + " "
+#---------------------------------------------------
     return grid
 
 
