@@ -24,19 +24,19 @@ def buildGrid(D):
             if grid[row][col] == "EE ":
                 grid[row][col] = "TT "
                 pits -= 1
-
+    
     count = 0;
     for row in range(0, D):
         if count == 0:
-            grid[0][row] = "AW "
+            grid[1][row] = "AW "
             grid[D - 1][row] = "PW "
             count += 1
         elif count == 1:
-            grid[0][row] = "AH "
+            grid[1][row] = "AH "
             grid[D - 1][row] = "PH "
             count += 1
         else:
-            grid[0][row] = "AM "
+            grid[1][row] = "AM "
             grid[D - 1][row] = "PM "
             count = 0
 
@@ -91,11 +91,33 @@ def move(cords, grid, D, user):
         else:                     # No one has fallen
             grid[nR][nC] = "T" + user + " "
     else:
+        if grid[cR][cC] == "PH" and next =="AW":
+            temp = grid[cR][cC]
+            grid[nR][nC] = temp[1:] + " "
+        if grid[cR][cC] == "PH" and next =="AM":
+            temp = next
+            grid[nR][nC] = temp[1:] +" "
+            
+        if grid[cR][cC] == "TP" and next =="AH":
+            temp = grid[cR][cC]
+            grid[nR][nC] = temp[1:] + " "
+        if grid[cR][cC] == "TP" and next =="AW":
+            temp = next
+            grid[nR][nC] = temp[1:] +" "
+            
+        if grid[cR][cC] == "PW" and next =="AM":
+            temp = grid[cR][cC]
+            grid[nR][nC] = temp[1:] + " "
+        if grid[cR][cC] == "PW" and next =="AH":
+            temp = next
+            grid[nR][nC] = temp[1:] +" "
+        if (grid[cR][cC] == "TP" and next =="AM") or (grid[cR][cC] == "PH" and next =="AH") or (grid[cR][cC] == "PW" and next =="AW"):
+            next == "EE"
+            grid[nR][nC] = "EE"
         if list(grid[cR][cC])[0] == "T":
             temp = grid[cR][cC]
             grid[nR][nC] = temp[1:] + " "
         else:
-
             grid[nR][nC] = grid[cR][cC]
 
         if list(grid[cR][cC])[0] == "T":
@@ -104,18 +126,7 @@ def move(cords, grid, D, user):
             grid[cR][cC] = "EE "
   #this will be where we will call combat 
 #---------------------------------------------------
-        if list(grid[cR][cC])[0] == "PH" and next[0] =="AW":
-            temp = grid[cR][cC]
-            grid[nR][nC] = temp[1:] + " "
-        if list(grid[cR][cC])[0] == "TP" and next[0] =="AH":
-            temp = grid[cR][cC]
-            grid[nR][nC] = temp[1:] + " "
-        if list(grid[cR][cC])[0] == "PW" and next[0] =="AM":
-            temp = grid[cR][cC]
-            grid[nR][nC] = temp[1:] + " "
-        if (list(grid[cR][cC])[0] == "TP" and next[0] =="AM") or (list(grid[cR][cC])[0] == "PH" and next[0] =="AH") or (list(grid[cR][cC])[0] == "PW" and next[0] =="AW"):
-            grid[cR][cC] == "EE"
-            grid[nR][nC] = grid[cR][cC][1:] + " "
+        
 #---------------------------------------------------
     return grid
 
@@ -138,6 +149,27 @@ def main():
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
     grid[4][5] = "TT "
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
     grid = move(cords, grid, D, "P")
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
