@@ -170,14 +170,11 @@ def main():
         D = int(input())
     print(D)
     grid = buildGrid(D)
-<<<<<<< HEAD
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-=======
+    global playerScore, agentScore 
     playerScore, agentScore = D, D
 
 
-"""    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
->>>>>>> e31aa7cd27a49440e77f3528e3a5cfb1ed62632c
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
     grid[4][5] = "TT "
     grid = move(cords, grid, D, "P")
@@ -187,7 +184,7 @@ def main():
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
     grid = move(cords, grid, D, "P")
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))"""
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
 
 if __name__ == '__main__':
     main()
