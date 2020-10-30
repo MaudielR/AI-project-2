@@ -155,7 +155,7 @@ def fight(user, opponent):
 
 
 def isValid(index, D):
-    return 0 < index < D
+    return 0 <= index < D
 
 
 def distance(x1, y1, x2, y2):
@@ -173,7 +173,6 @@ def main():
     grid = buildGrid(D)
     global playerScore, agentScore
     playerScore, agentScore = D, D
-    grid[4][5] = "AW "
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print("Player Score: " +str(playerScore)+ " Agent Score: " +str(agentScore))
     cords = selectValid(grid, D, "P")
