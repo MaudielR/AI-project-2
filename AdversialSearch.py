@@ -100,7 +100,7 @@ def move(cords, grid, D, user):
     # It is the opposing user
     else:
         if fight(curr[1], next[1]) == 0:
-            grid[nR][nC] == "EE "
+            grid[nR][nC] = "EE "
         elif fight(curr[1], next[1]) == 1:
             grid[nR][nC] = curr
             win(user)
@@ -138,17 +138,17 @@ def fight(user, opponent):
     if user == opponent:
         return 0
     elif user == "W":
-        if opponent == "Hero":
+        if opponent == "M":
             return 1
         else:
             return -1
     elif user == "H":
-        if opponent == "Mage":
+        if opponent == "W":
             return 1
         else:
             return -1
     else:
-        if opponent == "W":
+        if opponent == "H":
             return 1
         else:
             return -1
@@ -163,6 +163,7 @@ def distance(x1, y1, x2, y2):
 
 
 def main():
+
     print("Input Grid Size")
     D = int(input())
     while D % 3 != 0 or D <= 0:
@@ -170,10 +171,17 @@ def main():
         D = int(input())
     print(D)
     grid = buildGrid(D)
+    global playerScore, agentScore
     playerScore, agentScore = D, D
-
-
-"""    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    grid[4][5] = "AW "
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    print("Player Score: " +str(playerScore)+ " Agent Score: " +str(agentScore))
+    cords = selectValid(grid, D, "P")
+    grid = move(cords, grid, D, "P")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    print("Player Score: " + str(playerScore) + " Agent Score: " + str(agentScore))
+"""
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
     grid[4][5] = "TT "
     grid = move(cords, grid, D, "P")
@@ -183,7 +191,7 @@ def main():
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
     grid = move(cords, grid, D, "P")
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))"""
-
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+"""
 if __name__ == '__main__':
     main()
