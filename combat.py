@@ -1,6 +1,8 @@
 import math
 import random
 import maxsize
+import minsize
+
 from pip._vendor.distlib.compat import raw_input
 
 
@@ -188,28 +190,78 @@ def main():
 if __name__ == '__main__':
     main()
     
+class Node(object): 
+    def init(self, depth, alpha, beta, maximizingPlayer):
+        self.depth = depth
+        self.alpha = alpha 
+        self.beta = beta
+        self.maximizingPlayer = maximizingPlayer
+        self.childnode = []
+        self.children()
+    def childnode(self): 
+        if self.depth >= 0: 
+            for x in range(1,3): 
+                v = self.beta - x 
+                self.children.append(Node(self.depth -1,-self.alpha,v,self.value(v)))
+    def value(self, value):
+        if (value == 0): 
+            return maxsize * self.alpha
+        elif(value < 0):
+            return maxsize * -self.maximizingPlayer
+            
+    
+    def alphabeta(node, depth,  α, β, maximizingPlayer):
+        if (depth == 0) or (abs(node.value) == maxsize):
+            return node.value
+        if maximizingPlayer:
+            value = maxsize
+            prioirty_queue = []
+            for child in node:
+                prioirty_queue.push(child,h(child))
+            while child == prioirty_queue.pop():
+                value= max(value, alphabeta(child, depth − 1, α, β, FALSE))
+                α= max(α, value)
+                if α ≥ β:
+                    break (* β cut-off *)
+            return value
+        else
+            value= maxsize
+            for child in node:
+                prioirty_queue.push(child,-h(child))
+            while child == prioirty_queue.pop():
+                value = min(value, alphabeta(child, depth − 1, α, β, TRUE))
+                β= min(β, value)
+                if β ≤ α:
+                    break (* α cut-off *)
+            return value
 
-def alphabeta(node, depth,  α, β, maximizingPlayer):
-    if (depth == 0) or (abs(node.value) == maxsize):
-        return node.value
-    if maximizingPlayer:
-        value = maxsize
-        prioirty_queue = []
-        for child in node:
-            prioirty_queue.push(child,h(child))
-        while child == prioirty_queue.pop():
-            value= max(value, alphabeta(child, depth − 1, α, β, FALSE))
-            α= max(α, value)
-            if α ≥ β:
-                break (* β cut-off *)
-        return value
-    else
-        value= maxsize
-        for child in node:
-            prioirty_queue.push(child,-h(child))
-        while child == prioirty_queue.pop():
-            value = min(value, alphabeta(child, depth − 1, α, β, TRUE))
-            β= min(β, value)
-            if β ≤ α:
-                break (* α cut-off *)
-        return value
+"""
+    def minmax(node, depth, maximizingPlayer):
+            if (depth == 0) or (abs(node.value) == maxsize):
+                return node.value
+            if maximizingPlayer:
+                Maxvalue = maxsize
+            
+                for child in node:
+                    value = minmax(nide,depth -1, false)
+                    maxvalue = max(Maxvalue, value)
+                return maxvalue
+            else: 
+                MinValue = minsize
+                while child == prioirty_queue.pop():
+                    value= max(value, alphabeta(child, depth − 1, α, β, FALSE))
+                    α= max(α, value)
+                    if α ≥ β:
+                        break (* β cut-off *)
+                return value
+            else
+                value= maxsize
+                for child in node:
+                    prioirty_queue.push(child,-h(child))
+                while child == prioirty_queue.pop():
+                    value = min(value, alphabeta(child, depth − 1, α, β, TRUE))
+                    β= min(β, value)
+                    if β ≤ α:
+                        break (* α cut-off *)
+                return value
+""
