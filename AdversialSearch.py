@@ -97,8 +97,7 @@ def move(cords, grid, D, user):
         if next[1] == user:  # The user has already fallen so they just step over it
             grid[nR][nC] = "T" + curr[0, 1]
         elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
-            if next[
-                2] != " ":  # The user has found an opponent over a trapped space so they both die!  <This is kinda an assumption someone check up on this>
+            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
                 win(user)
             grid[nR][nC] = "EE "
             lose(user)
@@ -115,6 +114,8 @@ def move(cords, grid, D, user):
     else:
         if fight(curr[1], next[1]) == 0:
             grid[nR][nC] = "EE "
+            win(user)
+            lose(user)
         elif fight(curr[1], next[1]) == 1:
             grid[nR][nC] = curr
             win(user)
@@ -145,12 +146,12 @@ def moveAuto(cords, moveTo, grid, user, node):
             grid[nR][nC] = "T" + curr[0, 1]
         elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
             if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
-                win(user, node)
+                winAuto(user, node)
             grid[nR][nC] = "EE "
-            node.value = lose(user, node)
+            node.value = loseAuto(user, node)
         else:  # No one has fallen, and the user falls in
             grid[nR][nC] = "T" + user + " "
-            node.value = lose(user, node)
+            node.value = loseAuto(user, node)
     # It is empty
     elif next[0] == "E":
         if curr == "T":
@@ -161,18 +162,18 @@ def moveAuto(cords, moveTo, grid, user, node):
     else:
         if fight(curr[1], next[1]) == 0:
             grid[nR][nC] = "EE "
-            node.value = win(user, node)
-            node.value = lose(user, node)
+            node.value = winAuto(user, node)
+            node.value = loseAuto(user, node)
         elif fight(curr[1], next[1]) == 1:
             grid[nR][nC] = curr
-            node.value = win(user, node)
+            node.value = winAuto(user, node)
         else:
-            node.value = lose(user, node)
+            node.value = loseAuto(user, node)
     return True
 
 
 # The user who wins causes the other user to lose points
-def win(user, node):
+def winAuto(user, node):
     if user == "P":
         return node.value[0], node.value[1] - 1
     else:
@@ -180,12 +181,29 @@ def win(user, node):
 
 
 # Is Win but reversed
-def lose(user, node):
+def loseAuto(user, node):
     global playerScore, agentScore
     if user == "P":
         return node.value[0] - 1, node.value[1]
     else:
         return node.value[0], node.value[1] - 1
+
+# The user who wins causes the other user to lose points
+def win(user):
+    global playerScore, agentScore
+    if user == "P":
+        agentScore -= 1
+    else:
+        playerScore -= 1
+
+
+# Is Win but reversed
+def lose(user):
+    global playerScore, agentScore
+    if user == "P":
+        playerScore -= 1
+    else:
+        agentScore -= 1
 
 
 # 1 is Win, -1 is Lose, 0 is Tie
@@ -227,6 +245,7 @@ def neighborsSet(grid, D, cell):
 
 
 def main():
+    global playerScore, agentScore
     listOfN = []
     for x in range(0, 3):
         for y in range(0, 3):
