@@ -243,6 +243,30 @@ def neighborsSet(grid, D, cell):
     neighbors = {cell: n}
     return neighbors
 
+# maximizingPlayer just needs to a boolean in this case, if user true, if not false
+def minmax(node, depth, maximizingPlayer, grid):
+    global valid
+    if depth == 0 or node.value == 0:
+        return node.value
+
+    if maximizingPlayer:
+        maxVal = sys.maxsize * -1
+        # This is only cords at this point
+        for child in node:
+            tempGrid = grid
+            next = Node(0, 0, "P", node.value, valid[child])  # Ignoring alpha and beta for now
+            change = moveAuto(node.root, child, tempGrid, node.maximizingPlayer, next)
+            if change:
+                maxVal = max(maxVal, minmax(next, depth - 1, False))
+                return maxVal
+    else:
+        minVal = sys.maxsize
+        for child in node:
+            tempGrid = grid
+            #This needs to be a node
+            minVal = min(minVal, minmax(child, depth - 1, True))
+
+
 
 def main():
     global playerScore, agentScore
