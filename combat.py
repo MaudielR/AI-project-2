@@ -35,7 +35,7 @@ def buildGrid(D):
     return grid
 
 
-# Select Valid Coordinates
+# Select Valid Piece, if you select an empty cell or a pit or your opponents piece it will get mad
 def selectValid(grid, D, user):
     print("What piece would you like to move? Enter: (row,col)")
     row, col = tuple(map(int, raw_input().split(',')))
@@ -55,7 +55,7 @@ def selectValid(grid, D, user):
             print("You have selected your opponents piece")
         selectValid(grid, D, user)
     else:
-        print("The piece you have selected is: " + cur + " at the coordinates (" + str(row) + "," + str(col) + ")")
+        # print("The piece you have selected is: " + cur + " at the coordinates (" + str(row) + "," + str(col) + ")")
         return row, col
 
 
@@ -84,7 +84,8 @@ def move(cords, grid, D, user):
         if next[1] == user:  # The user has already fallen so they just step over it
             grid[nR][nC] = "T" + curr[0, 1]
         elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
-            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!  <This is kinda an assumption someone check up on this>
+            if next[
+                2] != " ":  # The user has found an opponent over a trapped space so they both die!  <This is kinda an assumption someone check up on this>
                 win(user)
             grid[nR][nC] = "EE "
             lose(user)
@@ -160,35 +161,37 @@ def isValid(index, D):
 
 def distance(x1, y1, x2, y2):
     return int(math.sqrt((((x2 - x1) ** 2) + ((y2 - y1) ** 2))))
-#-----------------------------------------------------------------------------------------------------------------------------------
-#min max node with tsudo() code version, alphabeta(), Originial minmax()
-#if it gives you erros try searchihng for init--funcitons--- to fix problems 
 
 
+# -----------------------------------------------------------------------------------------------------------------------------------
+# min max node with tsudo() code version, alphabeta(), Originial minmax()
+# if it gives you erros try searching for init--funcitons--- to fix problems
 
-    
-class Node(object): 
+
+class Node(object):
     def init(self, depth, alpha, beta, maximizingPlayer):
         self.depth = depth
-        self.alpha = alpha 
+        self.alpha = alpha
         self.beta = beta
         self.maximizingPlayer = maximizingPlayer
         self.childnode = []
         self.children()
-    def children(self): 
-        if self.depth >= 0: 
-            #range in the next matrix postition
-            for x in range(1,8): 
-                v = self.beta - x 
-                self.children.append(Node(self.depth -1,-self.alpha,v,self.value(v)))
+
+    def children(self):
+        if self.depth >= 0:
+            # range in the next matrix postition
+            for x in range(1, 8):
+                v = self.beta - x
+                self.children.append(Node(self.depth - 1, -self.alpha, v, self.value(v)))
+
     def value(self, value):
         maxsize = 10000
-        
-        if (value == 0): 
+
+        if (value == 0):
             return maxsize * self.alpha
-        elif(value < 0):
+        elif (value < 0):
             return maxsize * -self.maximizingPlayer
-            
+
     def alphabeta(self, node, depth, alpha, beta, maximizingPlayer):
         maxsize = 10000
         minsize = -10000
@@ -199,24 +202,25 @@ class Node(object):
             prioirty_queue = []
 
             for child in node:
-                prioirty_queue.push(child,h(child))
+                prioirty_queue.push(child, h(child))
             while child == prioirty_queue.pop():
-                value = alphabeta(self,child, depth-1, alpha, beta, False)
-                Maxvalue = max(Maxvalue,value)
+                value = alphabeta(self, child, depth - 1, alpha, beta, False)
+                Maxvalue = max(Maxvalue, value)
                 if beta <= alpha:
                     break
             return Maxvalue
-        else: 
+        else:
             Minvalue = maxsize
-            for child in node: 
-                prioirty_queue.push(child,-h(child))
+            for child in node:
+                prioirty_queue.push(child, -h(child))
             while child == prioirty_queue.pop():
-                value= alphabeta(self,child, depth - 1, alpha, beta, True)
+                value = alphabeta(self, child, depth - 1, alpha, beta, True)
                 Minvalue = min(Minvalue, value)
                 beta = min(beta, value)
-                if beta <= alpha: 
-                    break 
+                if beta <= alpha:
+                    break
             return Minvalue
+
 
 """
 def alphabeta(node, depth,  α, β, maximizingPlayer):
@@ -244,8 +248,12 @@ def alphabeta(node, depth,  α, β, maximizingPlayer):
                     break (* α cut-off *)
             return value
 # test initial call 
+"""
 
-
+"""
+#Issues: THere is no MaxSize
+#Depth is D
+#Maxsize is 
 #this is the plain minmax algorithm
     def minmax(node, depth, maximizingPlayer):
             if (depth == 0) or (abs(node.value) == maxsize):
@@ -264,8 +272,21 @@ def alphabeta(node, depth,  α, β, maximizingPlayer):
                     value = minmax(nide,depth -1, True)
                     Minvalue = max(Minvalue, value)
                 return Minvalue
+
 """
-#------------------------------------------------------------------------------------------------------------
+
+def minimax(node, depth, user):
+    if depth == 0 or getScore(u)
+
+
+def getScore(user):
+    global playerScore, agentScore
+    if user == "P":
+        return playerScore
+    else:
+        return agentScore
+
+# ------------------------------------------------------------------------------------------------------------
 def main():
     print("Input Grid Size")
     D = int(input())
@@ -275,7 +296,6 @@ def main():
     print(D)
     grid = buildGrid(D)
     playerScore, agentScore = D, D
-
 
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
@@ -288,5 +308,7 @@ def main():
     cords = selectValid(grid, D, "P")
     grid = move(cords, grid, D, "P")
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+
+
 if __name__ == '__main__':
     main()

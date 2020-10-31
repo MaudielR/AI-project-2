@@ -1,7 +1,20 @@
 import math
 import random
+from itertools import product
 
 from pip._vendor.distlib.compat import raw_input
+
+
+class Node(object):
+    # Valid must be initalized with valid[cell] before hand
+    # Value should be a tuple (playerScore, agentScore)
+    def __init__(self, alpha, beta, maximizingPlayer, initalScore, valid):
+        self.alpha = alpha
+        self.beta = beta
+        self.maximizingPlayer = maximizingPlayer
+        self.value = initalScore
+        self.childnodes = valid
+        self.children()
 
 
 def buildGrid(D):
@@ -84,7 +97,8 @@ def move(cords, grid, D, user):
         if next[1] == user:  # The user has already fallen so they just step over it
             grid[nR][nC] = "T" + curr[0, 1]
         elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
-            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!  <This is kinda an assumption someone check up on this>
+            if next[
+                2] != " ":  # The user has found an opponent over a trapped space so they both die!  <This is kinda an assumption someone check up on this>
                 win(user)
             grid[nR][nC] = "EE "
             lose(user)
@@ -115,22 +129,63 @@ def move(cords, grid, D, user):
     return grid
 
 
-# The user who wins causes the other user to lose points
-def win(user):
-    global playerScore, agentScore
-    if user == "P":
-        agentScore -= 1
+# Assume these coords are always valid
+# Return 9 if invalid move
+def moveAuto(cords, moveTo, grid, user, node):
+    cR, cC = cords
+    nR, nC = moveTo
+    curr = grid[cR][cC]
+    next = grid[nR][nC]
+    if next[0] == user:
+        print("Invalid coordinate, you are trying to move into your own piece")
+        return False
+    # It is a trap!
+    elif next[0] == "T":
+        if next[1] == user:  # The user has already fallen so they just step over it
+            grid[nR][nC] = "T" + curr[0, 1]
+        elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
+            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
+                win(user, node)
+            grid[nR][nC] = "EE "
+            node.value = lose(user, node)
+        else:  # No one has fallen, and the user falls in
+            grid[nR][nC] = "T" + user + " "
+            node.value = lose(user, node)
+    # It is empty
+    elif next[0] == "E":
+        if curr == "T":
+            grid[nR][nC] = curr[1:] + " "
+        else:
+            grid[nR][nC] = curr
+    # It is the opposing user
     else:
-        playerScore -= 1
+        if fight(curr[1], next[1]) == 0:
+            grid[nR][nC] = "EE "
+            node.value = win(user, node)
+            node.value = lose(user, node)
+        elif fight(curr[1], next[1]) == 1:
+            grid[nR][nC] = curr
+            node.value = win(user, node)
+        else:
+            node.value = lose(user, node)
+    return True
+
+
+# The user who wins causes the other user to lose points
+def win(user, node):
+    if user == "P":
+        return node.value[0], node.value[1] - 1
+    else:
+        return node.value[0] - 1, node.value[1]
 
 
 # Is Win but reversed
-def lose(user):
+def lose(user, node):
     global playerScore, agentScore
     if user == "P":
-        playerScore -= 1
+        return node.value[0] - 1, node.value[1]
     else:
-        agentScore -= 1
+        return node.value[0], node.value[1] - 1
 
 
 # 1 is Win, -1 is Lose, 0 is Tie
@@ -162,8 +217,23 @@ def distance(x1, y1, x2, y2):
     return int(math.sqrt((((x2 - x1) ** 2) + ((y2 - y1) ** 2))))
 
 
-def main():
+def neighborsSet(grid, D, cell):
+    n = []
+    for x in product(*(range(coords - 1, coords + 2) for coords in cell)):
+        if x != cell and all(0 <= n < D for n in x):
+            n.append(x)
+    neighbors = {cell: n}
+    return neighbors
 
+
+def main():
+    listOfN = []
+    for x in range(0, 3):
+        for y in range(0, 3):
+            listOfN.append(neighborsSet(3, (x, y)))
+
+
+    """
     print("Input Grid Size")
     D = int(input())
     while D % 3 != 0 or D <= 0:
@@ -179,7 +249,7 @@ def main():
     grid = move(cords, grid, D, "P")
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print("Player Score: " + str(playerScore) + " Agent Score: " + str(agentScore))
-"""
+
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     cords = selectValid(grid, D, "P")
     grid[4][5] = "TT "
@@ -191,6 +261,8 @@ def main():
     cords = selectValid(grid, D, "P")
     grid = move(cords, grid, D, "P")
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-"""
+    """
+
+
 if __name__ == '__main__':
     main()
