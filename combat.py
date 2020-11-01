@@ -192,7 +192,7 @@ class Node(object):
     def alphabeta(self, node, depth, alpha, beta, maximizingPlayer):
         maxsize = 10000
         minsize = -10000
-        if (depth == 0) or (abs(node.value) == maxsize):
+        if (depth == 0) or (abs(node.value()) == maxsize):
             return node.value
         if maximizingPlayer:
             Maxvalue = minsize
