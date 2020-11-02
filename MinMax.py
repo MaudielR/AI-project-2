@@ -1,0 +1,277 @@
+import math
+import random
+import sys
+from itertools import product
+
+from pip._vendor.distlib.compat import raw_input
+
+
+class Node(object):
+    # Maximizing player should be a boolean
+    # userPieces and opponentPieces is a list of all pieces
+    # Child is currently up for debate so ignore
+    # We can treat node value as len of lists, though it doesn't exists
+    # Also I'm ignoring alpha and beta for now lol
+    def __init__(self, alpha, beta, maximizingPlayer, agentPieces, playerPieces):
+        self.alpha = alpha
+        self.beta = beta
+        self.maximizingPlayer = maximizingPlayer
+        # self.value = initalScore
+        self.agent = agentPieces
+        self.player = playerPieces
+
+def buildGrid(D):
+    # Grid size is DxD
+    # EE is Empty and TT is for Pit
+    grid = [["EE " for i in range(D)] for j in range(D)]
+
+    for col in range(1, D - 1):
+        pits = (D / 3) - 1
+        while pits != 0:
+            row = random.randint(0, D - 1)
+            if grid[row][col] == "EE ":
+                grid[row][col] = "TT "
+                pits -= 1
+
+    count = 0;
+    for row in range(0, D):
+        if count == 0:
+            grid[0][row] = "AW "
+            grid[D - 1][row] = "PW "
+            count += 1
+        elif count == 1:
+            grid[0][row] = "AH "
+            grid[D - 1][row] = "PH "
+            count += 1
+        else:
+            grid[0][row] = "AM "
+            grid[D - 1][row] = "PM "
+            count = 0
+
+    return grid
+
+
+# Select Valid Coordinates
+def selectValid(grid, D, user):
+    print("What piece would you like to move? Enter: (row,col)")
+    row, col = tuple(map(int, raw_input().split(',')))
+    while not isValid(row, D) or not (isValid(col, D)):
+        print(grid[row][col])
+        print("Invalid coordinate, please input (row,col) within the bounds of 0 and " + str(D))
+        row, col = tuple(map(int, raw_input().split(',')))
+
+    cur = grid[row][col]
+    if cur[0] != user and cur[1] != user:
+        print(cur)
+        if cur[0] == "E":
+            print("This is an empty cell")
+        elif cur[1] == "T":
+            print("This is a pit")
+        else:
+            print("You have selected your opponents piece")
+        selectValid(grid, D, user)
+    else:
+        print("The piece you have selected is: " + cur + " at the coordinates (" + str(row) + "," + str(col) + ")")
+        return row, col
+
+
+"""
+# If someone has fallen in a pit TT is changed to T[User who fell in] if both users have fallen in it just becomes EE
+def move(cords, grid, D, user):
+    global playerScore, agentScore
+    print("Where would you like to move? Enter: (row,col)")
+    cR, cC = cords
+    nR, nC = tuple(map(int, raw_input().split(',')))
+    curr = grid[cR][cC]
+    while not (isValid(nR, D)) or not (isValid(nC, D)) or distance(nR, nC, cR, cC) != 1:
+        if distance(cR, nR, cC, nC) != 1:
+            print("Invalid coordinate, please input (row,col) within 1 cell of " + str(cords))
+        else:
+            print("Invalid coordinate, please input (row,col) within the bounds of 0 and " + str(D))
+        nR, nC = tuple(map(int, raw_input().split(',')))
+
+    next = grid[nR][nC]
+
+    # Decides what happens to the targeted cell
+    if next[0] == user:
+        print("Invalid coordinate, you are trying to move into your own piece")
+        move(cords, grid, D, user)
+    # It is a trap!
+    elif next[0] == "T":
+        if next[1] == user:  # The user has already fallen so they just step over it
+            grid[nR][nC] = "T" + curr[0, 1]
+        elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
+            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
+                win(user)
+            grid[nR][nC] = "EE "
+            lose(user)
+        else:  # No one has fallen, and the user falls in
+            grid[nR][nC] = "T" + user + " "
+            lose(user)
+    # It is empty
+    elif next[0] == "E":
+        if curr == "T":
+            grid[nR][nC] = curr[1:] + " "
+        else:
+            grid[nR][nC] = curr
+    # It is the opposing user
+    else:
+        if fight(curr[1], next[1]) == 0:
+            grid[nR][nC] = "EE "
+            win(user)
+            lose(user)
+        elif fight(curr[1], next[1]) == 1:
+            grid[nR][nC] = curr
+            win(user)
+        else:
+            lose(user)
+
+    # Decides what current cell should be
+    if curr == "T":
+        grid[cR][cC] = "T" + user + " "
+    else:
+        grid[cR][cC] = "EE "
+    return grid
+"""
+
+
+# 1 is Win, -1 is Lose, 0 is Tie
+def fight(user, opponent):
+    if user == opponent:
+        return 0
+    elif user == "W":
+        if opponent == "M":
+            return 1
+        else:
+            return -1
+    elif user == "H":
+        if opponent == "W":
+            return 1
+        else:
+            return -1
+    else:
+        if opponent == "H":
+            return 1
+        else:
+            return -1
+
+
+def isValid(index, D):
+    return 0 <= index < D
+
+
+def distance(x1, y1, x2, y2):
+    return int(math.sqrt((((x2 - x1) ** 2) + ((y2 - y1) ** 2))))
+
+
+def neighborsSet(grid, D, cell):
+    n = []
+    for x in product(*(range(coords - 1, coords + 2) for coords in cell)):
+        if x != cell and all(0 <= n < D for n in x):
+            n.append(x)
+    neighbors = {cell: n}
+    return neighbors
+
+
+# Assume these coords are always valid
+def moveAuto(cords, moveTo, grid, user, node):
+    cR, cC = cords
+    nR, nC = moveTo
+    curr = grid[cR][cC]
+    next = grid[nR][nC]
+    if next[0] == user:
+        print("Invalid coordinate, you are trying to move into your own piece")
+        return False
+        # It is a trap!
+    elif next[0] == "T":
+        if next[1] == user:  # The user has already fallen so they just step over it
+            grid[nR][nC] = "T" + curr[0, 1]
+        elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
+            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
+                winAuto(user, node, moveTo)
+            grid[nR][nC] = "EE "
+            loseAuto(user, node, cords)
+        else:  # No one has fallen, and the user falls in
+            grid[nR][nC] = "T" + user + " "
+            loseAuto(user, node, cords)
+        # It is empty
+    elif next[0] == "E":
+        if curr == "T":
+            grid[nR][nC] = curr[1:] + " "
+        else:
+            grid[nR][nC] = curr
+        # It is the opposing user
+    else:
+        if fight(curr[1], next[1]) == 0:
+            grid[nR][nC] = "EE "
+            winAuto(user, node, moveTo)
+            loseAuto(user, node, cords)
+        elif fight(curr[1], next[1]) == 1:
+            grid[nR][nC] = curr
+            winAuto(user, node, moveTo)
+        else:
+            loseAuto(user, node, cords)
+        return True
+
+
+# The user who wins causes the other user to lose points
+def winAuto(user, node, cord):
+    if user == "P":
+        node.agent.remove(cord)
+    else:
+        node.player.remove(cord)
+
+
+# Is Win but reversed
+def loseAuto(user, node, cord):
+    if user == "P":
+        node.player.remove(cord)
+    else:
+        node.agent.remove(cord)
+
+
+# Assume maximizing player is always Agent for the sake of simplicity
+# maximizingPlayer just needs to a boolean in this case, if user true, if not false
+def minmax(node, depth, grid):
+    global valid
+    if depth == 0 or (node.user == 0 or node.opponent == 0):
+        return node.value
+
+    if node.maximizingPlayer:
+        maxVal = -10000000
+        # Look at every piece the current user possesses
+        for piece in node.agent:
+            # Filter Valid Coordinates by List of User Pieces
+            for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
+                tempGrid = grid  # Shallow copy of the Grid so as not to effect the actual game
+                next = Node(0, 0, False, node.agent, node.player)
+                # Here we updated user and opponent lists within the next node on the temporary grid
+                moveAuto(piece, validMove, tempGrid, "A", next)
+                # Now we get the Max, we stay on the temporary grid cause algorithm isn't finished
+                maxVal = max(maxVal, minmax(next, depth - 1, tempGrid))
+            return maxVal
+    else:
+        minVal = sys.maxsize
+        for piece in node.player:
+            for validMove in list(filter(lambda x: x not in node.opponent, valid[piece])):
+                tempGrid = grid
+                next = Node(0, 0, True, node.agent, node.player)
+                moveAuto(piece, validMove, tempGrid, "P", next)
+                minVal = min(minVal, minmax(next, depth - 1, tempGrid))
+            return minVal
+
+def main():
+    D = int(input())
+    playerPieces, agentPieces = [], []
+    for i in range(0, D):
+        playerPieces.append((D, i))
+        agentPieces.append((0, i))
+
+    valid = []
+    for x in range(0, 3):
+        for y in range(0, 3):
+            valid.append(neighborsSet(3, (x, y)))
+
+
+if __name__ == '__main__':
+    main()
