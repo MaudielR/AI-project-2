@@ -173,6 +173,66 @@ def neighborsSet(D, cell):
     return n
 
 
+# If someone has fallen in a pit TT is changed to T[User who fell in] if both users have fallen in it just becomes EE
+def move(cords, grid, D, user, node):
+    print("Where would you like to move? Enter: (row,col)")
+    cR, cC = cords
+    nR, nC = tuple(map(int, raw_input().split(',')))
+    curr = grid[cR][cC]
+    while not (isValid(nR, D)) or not (isValid(nC, D)) or distance(nR, nC, cR, cC) != 1:
+        if distance(cR, nR, cC, nC) != 1:
+            print("Invalid coordinate, please input (row,col) within 1 cell of " + str(cords))
+        else:
+            print("Invalid coordinate, please input (row,col) within the bounds of 0 and " + str(D))
+        nR, nC = tuple(map(int, raw_input().split(',')))
+
+    next = grid[nR][nC]
+
+    # Decides what happens to the targeted cell
+    if next[0] == user:
+        print("Invalid coordinate, you are trying to move into your own piece")
+        move(cords, grid, D, user, node)
+    # It is a trap!
+    elif next[0] == "T":
+        if next[1] == user:  # The user has already fallen so they just step over it
+            grid[nR][nC] = "T" + curr[0, 1]
+            updatePosition(user, node, cords, (nR, nC))
+        elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
+            if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
+                winAuto(user, node, (nR,nC))
+            grid[nR][nC] = "EE "
+            loseAuto(user, node, cords)
+        else:  # No one has fallen, and the user falls in
+            grid[nR][nC] = "T" + user + " "
+            loseAuto(user, node, cords)
+    # It is empty
+    elif next[0] == "E":
+        if curr == "T":
+            grid[nR][nC] = curr[1:] + " "
+        else:
+            grid[nR][nC] = curr
+        updatePosition(user, node, cords, (nR, nC))
+    # It is the opposing user
+    else:
+        if fight(curr[1], next[1]) == 0:
+            grid[nR][nC] = "EE "
+            winAuto(user, node, (nR,nC))
+            loseAuto(user, node, cords)
+        elif fight(curr[1], next[1]) == 1:
+            grid[nR][nC] = curr
+            winAuto(user, node, (nR, nC))
+            updatePosition(user, node, cords, (nR, nC))
+        else:
+            loseAuto(user, node, cords)
+
+    # Decides what current cell should be
+    if curr == "T":
+        grid[cR][cC] = "T" + user + " "
+    else:
+        grid[cR][cC] = "EE "
+    return grid
+
+
 # Assume these coords are always valid
 def moveAuto(cords, moveTo, grid, user, node):
     cR, cC = cords
@@ -223,6 +283,28 @@ def moveAuto(cords, moveTo, grid, user, node):
         grid[cR][cC] = "EE "
     return grid
 
+# Select Valid Coordinates
+def selectValid(grid, D, user):
+    print("What piece would you like to move? Enter: (row,col)")
+    row, col = tuple(map(int, raw_input().split(',')))
+    while not isValid(row, D) or not (isValid(col, D)):
+        print(grid[row][col])
+        print("Invalid coordinate, please input (row,col) within the bounds of 0 and " + str(D))
+        row, col = tuple(map(int, raw_input().split(',')))
+
+    cur = grid[row][col]
+    if cur[0] != user and cur[1] != user:
+        print(cur)
+        if cur[0] == "E":
+            print("This is an empty cell")
+        elif cur[1] == "T":
+            print("This is a pit")
+        else:
+            print("You have selected your opponents piece")
+        selectValid(grid, D, user)
+    else:
+        print("The piece you have selected is: " + cur + " at the coordinates (" + str(row) + "," + str(col) + ")")
+        return row, col
 
 # The user who wins causes the other user to lose points
 def winAuto(user, node, cord):
@@ -310,10 +392,16 @@ def main():
     node = Node(0,0,True,agentPieces,playerPieces)
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print("Starting MinMax Algo")
-    first = minmax(0,node,D,grid)
-    print(first)
-
-
+    first, cord, moveTo = minmax(0,node,D,grid)
+    moveAuto(cord,moveTo,grid, "A",node)
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    cords = selectValid(grid, D, "P")
+    move(cords,grid,D,"P",node)
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    print("Starting MinMax Algo")
+    first, cord, moveTo = minmax(0, node, D, grid)
+    moveAuto(cord, moveTo, grid, "A", node)
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
 
 if __name__ == '__main__':
     main()
