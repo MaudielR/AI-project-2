@@ -247,7 +247,7 @@ def moveAuto(cords, moveTo, grid, user, node):
         # It is a trap!
     elif next[0] == "T":
         if next[1] == user:  # The user has already fallen so they just step over it
-            grid[nR][nC] = "T" + curr[0, 1]
+            grid[nR][nC] = "T" + curr[:2]
             updatePosition(user, node, cords, moveTo)
         elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
             if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
@@ -430,7 +430,7 @@ def main():
     print(evaluatePosition(node,grid))"""
     while node.player != 0 and node.agent != 0:
         print("Starting MinMax Algo")
-        first, cord, moveTo = minmax(0, node, D, grid)
+        first, cord, moveTo = minmax(0, node, 3, grid)
         print(first)
         moveAuto(cord, moveTo, grid, "A", node)
         print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
