@@ -179,8 +179,8 @@ def moveAuto(cords, moveTo, grid, user, node):
     nR, nC = moveTo
     curr = grid[cR][cC]
     next = grid[nR][nC]
-    print("User: " + user + " Cords: " + str(cords) + " moveTo: " + str(moveTo))
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    #print("User: " + user + " Cords: " + str(cords) + " moveTo: " + str(moveTo))
+    #print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     if next[0] == user:
         print("Invalid coordinate, you are trying to move into your own piece")
         # It is a trap!
@@ -251,35 +251,47 @@ def updatePosition(user,node,cord,moveTo):
 # maximizingPlayer just needs to a boolean in this case, if user true, if not false
 def minmax(position, node, depth, grid):
     global valid
-    print("Depth " +str(depth))
+    #print("Depth " +str(depth))
     if depth == 0 or (len(node.agent) == 0 or len(node.player) == 0):
-        print("Returning Now " + str(len(node.agent)-len(node.player)))
+        #print("Returning Now " + str(len(node.agent)-len(node.player)))
         return len(node.agent)-len(node.player), position
 
     if node.maximizingPlayer:
-        maxVal = -10000000, (0,0)
+        maxVal = -10000000
+        bestMove, origin = None, None
         # Look at every piece the current user possesses
         for piece in node.agent:
             # Filter Valid Coordinates by List of User Pieces
             for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
-                print("MAX Piece :"+str(piece)+" validMove: "+ str(validMove))
+                #print("MAX Piece :"+str(piece)+" validMove: "+ str(validMove))
                 tempGrid = copy.deepcopy(grid)  # Shallow copy of the Grid so as not to effect the actual game
                 next = Node(0, 0, False, copy.deepcopy(node.agent), copy.deepcopy(node.player))
                 # Here we updated user and opponent lists within the next node on the temporary grid
                 moveAuto(piece, validMove, tempGrid, "A", next)
                 # Now we get the Max, we stay on the temporary grid cause algorithm isn't finished
-                maxVal = max(maxVal, minmax(validMove,next, depth - 1, tempGrid))
-            return maxVal
+                val = minmax(validMove,next, depth - 1, tempGrid)[0]
+                maxVal = max(maxVal,val)
+                if maxVal == val:
+                    origin = piece
+                    bestMove = validMove
+
+            return maxVal, origin, bestMove
     else:
-        minVal = sys.maxsize, (0,0)
+        minVal = sys.maxsize
+        bestMove, origin = None, None
         for piece in node.player:
             for validMove in list(filter(lambda x: x not in node.player, valid[piece])):
-                print("MIN Piece :" + str(piece) + " validMove: " + str(validMove))
+                #print("MIN Piece :" + str(piece) + " validMove: " + str(validMove))
                 tempGrid = copy.deepcopy(grid)
                 next = Node(0, 0, True, copy.deepcopy(node.agent),copy.deepcopy(node.player))
                 moveAuto(piece, validMove, tempGrid, "P", next)
-                minVal = min(minVal, minmax(validMove,next, depth - 1, tempGrid))
-            return minVal
+                val = minmax(validMove,next, depth - 1, tempGrid)[0]
+                minVal = min(minVal, val)
+                if minVal == val:
+                    origin = piece
+                    bestMove = validMove
+
+            return minVal, origin, bestMove
 
 def main():
     global valid
@@ -296,9 +308,12 @@ def main():
     grid = buildGrid(D)
     #print(valid)
     node = Node(0,0,True,agentPieces,playerPieces)
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print("Starting MinMax Algo")
     first = minmax(0,node,D,grid)
     print(first)
+
+
 
 if __name__ == '__main__':
     main()
