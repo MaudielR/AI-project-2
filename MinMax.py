@@ -334,6 +334,55 @@ def updatePosition(user, node, cord, moveTo):
 
 # Assume maximizing player is always Agent for the sake of simplicity
 # maximizingPlayer just needs to a boolean in this case, if user true, if not false
+def NoPruningMinmax(node, depth, grid):
+    global valid
+    # print("Depth " +str(depth))
+    if depth == 0 or (len(node.agent) == 0 or len(node.player) == 0):
+        # print("Returning Now " + str(len(node.agent)-len(node.player)))
+        return evaluatePosition(node, grid), depth
+    if node.maximizingPlayer:
+        maxVal = -10000000
+        bestMove, origin = None, None
+        # Look at every piece the current user possesses
+        for piece in node.agent:
+            # Filter Valid Coordinates by List of User Pieces
+            for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
+                #print("MAX Piece :" + str(piece) + " validMove: " + str(validMove))
+                tempGrid = copy.deepcopy(grid)  # Shallow copy of the Grid so as not to effect the actual game
+                next = Node(False, copy.deepcopy(node.agent), copy.deepcopy(node.player))
+                # Here we updated user and opponent lists within the next node on the temporary grid
+                moveAuto(piece, validMove, tempGrid, "A", next)
+                # Now we get the Max, we stay on the temporary grid cause algorithm isn't finished
+                val = minmax(next, depth - 1, tempGrid)[0]
+                #print("maxVal: " + str(maxVal) + " Val: " + str(val))
+                maxVal = max(maxVal, val)
+                alpha = max(alpha, maxVal)
+                if maxVal == val:
+                    origin = piece
+                    bestMove = validMove
+
+        return maxVal, origin, bestMove
+    else:
+        minVal = 100000000
+        bestMove, origin = None, None
+        for piece in node.player:
+            for validMove in list(filter(lambda x: x not in node.player, valid[piece])):
+                #print("MIN Piece :" + str(piece) + " validMove: " + str(validMove))
+                tempGrid = copy.deepcopy(grid)
+                next = Node(True, copy.deepcopy(node.agent), copy.deepcopy(node.player))
+                moveAuto(piece, validMove, tempGrid, "P", next)
+                val = minmax(next, depth - 1, tempGrid)[0]
+                #print("minVal: " + str(minVal) + " Val: " + str(val))
+                minVal = min(minVal, val)
+                beta = min(beta, minVal)
+                if minVal == val:
+                    origin = piece
+                    bestMove = validMove
+        return minVal, origin, bestMove
+
+
+# Assume maximizing player is always Agent for the sake of simplicity
+# maximizingPlayer just needs to a boolean in this case, if user true, if not false
 def minmax(node, depth, grid, alpha, beta):
     global valid
     # print("Depth " +str(depth))
