@@ -396,6 +396,8 @@ def minmax(node, depth, grid, alpha, beta):
         for piece in node.agent:
             # Filter Valid Coordinates by List of User Pieces
             for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
+                """if piece == (0,1) and validMove == (1,1):
+                    print("Here")"""
                 #print("MAX Piece :" + str(piece) + " validMove: " + str(validMove))
                 tempGrid = copy.deepcopy(grid)  # Shallow copy of the Grid so as not to effect the actual game
                 next = Node(False, copy.deepcopy(node.agent), copy.deepcopy(node.player))
@@ -409,8 +411,8 @@ def minmax(node, depth, grid, alpha, beta):
                 if maxVal == val:
                     origin = piece
                     bestMove = validMove
-            if beta <= alpha:
-                break
+                if beta <= alpha:
+                    break
         return maxVal, origin, bestMove
     else:
         minVal = 100000000
@@ -428,9 +430,18 @@ def minmax(node, depth, grid, alpha, beta):
                 if minVal == val:
                     origin = piece
                     bestMove = validMove
-            if beta <= alpha:
-                break
+                if beta <= alpha:
+                    break
         return minVal, origin, bestMove
+
+def getChild(nodeList):
+    global valid
+    children = []
+    for piece in nodeList:
+        # Filter Valid Coordinates by List of User Pieces
+        for validMove in list(filter(lambda x: x not in nodeList, valid[piece])):
+            children.append((piece,validMove))
+    return children
 
 
 def evaluatePosition(node, gird):
@@ -479,13 +490,13 @@ def main():
     print("Updated")
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print(evaluatePosition(node,grid))"""
-    while node.player != 0 and node.agent != 0:
+    while len(node.player)!= 0 and len(node.agent) != 0:
         print("Starting MinMax Algo")
-        first, cord, moveTo = minmax(node, 5, grid, -100000, 1000000)
+        first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
         print(first)
         moveAuto(cord, moveTo, grid, "A", node)
         print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-        if node.player == 0 or node.agent == 0:
+        if len(node.player) == 0 or len(node.agent) == 0:
             break
         cords = selectValid(grid, D, "P")
         move(cords, grid, D, "P", node)
