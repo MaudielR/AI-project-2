@@ -194,7 +194,7 @@ def move(cords, grid, D, user, node):
     # It is a trap!
     elif next[0] == "T":
         if next[1] == user:  # The user has already fallen so they just step over it
-            grid[nR][nC] = "T" + curr[0, 1]
+            grid[nR][nC] = "T" + curr[:2]
             updatePosition(user, node, cords, (nR, nC))
         elif next[1] != "T":  # The user falls, but at this point both have fallen in so we change to EE
             if next[2] != " ":  # The user has found an opponent over a trapped space so they both die!
