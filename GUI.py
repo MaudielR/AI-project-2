@@ -1,12 +1,13 @@
+import random
+
+import pygame as p
 import math
 import random
 import sys
 from itertools import product
 import copy
 import time
-from GUIversion import App
-import tkinter as tk
-   
+
 from pip._vendor.distlib.compat import raw_input
 
 
@@ -348,51 +349,113 @@ def evaluatePosition(node, gird):
     return evaluation + (len(node.agent) - len(node.player))
 
 
-def main():
-    global valid
-    print("What size board would you like?")
-    
-    D = int(input())
-    App.__init__(self, D,D )
-    playerPieces, agentPieces = [], []
+
+print("What size board would you like?")
+width, height = 400, 400
+margin = 5
+global W,H,M,cellSize, valid, playerPieces, agentPieces, D
+valid = {}
+
+
+playerPieces, agentPieces = [], []
+
+def setGlobals(IO):
+    global W, H, M, cellSize, valid, playerPieces, agentPieces, D
+    D = IO
+    cellSize = (width // D) - margin
+    W = p.transform.scale(p.image.load("Wumpus.png"), (cellSize, cellSize))
+    H = p.transform.scale(p.image.load("Hero.png"), (cellSize, cellSize))
+    M = p.transform.scale(p.image.load("Mage.png"), (cellSize, cellSize))
+    for x in range(0, D):
+        for y in range(0, D):
+            valid[(x, y)] = neighborsSet(D, (x, y))
     for i in range(0, D):
         playerPieces.append((D - 1, i))
         agentPieces.append((0, i))
 
-    valid = {}
-    for x in range(0, D):
-        for y in range(0, D):
-            valid[(x, y)] = neighborsSet(D, (x, y))
-    grid = buildGrid(D)
-    node = Node(True, agentPieces, playerPieces)
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-    start_time = time.time()
-    while len(node.player)!= 0 or len(node.agent) != 0:
-        print("Starting MinMax Algo")
-        first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
-        print(first)
-        moveAuto(cord, moveTo, grid, "A", node)
-        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-        print("--- %s seconds ---" % (time.time() - start_time))
-        if len(node.player) == 0 or len(node.agent) == 0:
-            break
-        cords = selectValid(grid, D, "P")
-        move(cords, grid, D, "P", node)
-        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
 
-    if len(node.player) == 0 and len(node.agent) == 0:
-        print("TIE!")
-    elif len(node.agent) == 0:
-        print("Player Won!")
-    else:
-        print("Player Lost!")
-    
+# Builds a Grid where EE is Empty and TT is for Pit, Agent occupies the top row and Player occupies the bottom row
+def buildGrid(D):
+    grid = [["EE " for i in range(D)] for j in range(D)]
+
+    for col in range(1, D - 1):
+        pits = (D / 3) - 1
+        while pits != 0:
+            row = random.randint(0, D - 1)
+            if grid[row][col] == "EE ":
+                grid[row][col] = "TT "
+                pits -= 1
+
+    count = 0
+    for row in range(0, D):
+        if count == 0:
+            grid[0][row] = "AW "
+            grid[D - 1][row] = "PW "
+            count += 1
+        elif count == 1:
+            grid[0][row] = "AH "
+            grid[D - 1][row] = "PH "
+            count += 1
+        else:
+            grid[0][row] = "AM "
+            grid[D - 1][row] = "PM "
+            count = 0
+
+    return grid
+
+
+def main():
+   
+    setGlobals(int(input()))
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    p.init()
+    clock = p.time.Clock()
+    screen = p.display.set_mode((width, height))
+    screen.fill(p.Color("black"))
+    running = True
+    node = Node(True, agentPieces, playerPieces)
+    while running:
+        for e in p.event.get():
+            if e.type == p.QUIT:
+                running = False
+            if e.type == p.MOUSEBUTTONDOWN:
+                print("Starting MinMax Algo")
+                first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
+                print(first)
+                moveAuto(cord, moveTo, grid, "A", node)
+        drawBoard(screen, grid)
+        clock.tick(15)
+        p.display.flip()
+
+
+
+
+
+# Draw inital board state
+def drawBoard(screen, grid):
+    for r in range(D):
+        for c in range(D):
+            type = grid[r][c]
+            if type[0] != "T":
+                p.draw.rect(screen, p.Color("White"),
+                            [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
+                loadPiece(screen, type[1], r, c)
+            else:
+                p.draw.rect(screen, p.Color("Grey"),
+                            [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
+                loadPiece(screen, type[2], r, c)
+
+
+def loadPiece(screen, type, r, c):
+    if type == "W":
+        screen.blit(W, p.Rect((margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize))
+    elif type == "H":
+        screen.blit(H, p.Rect((margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize))
+    elif type == "M":
+        screen.blit(M, p.Rect((margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize))
 
 
 if __name__ == '__main__':
     main()
-    root = tk.Tk()
-    board = App(root)
-    board.pack(side="top", fill="both", expand="true", padx=4, pady=4)
-   
-    root.mainloop()
+
+
