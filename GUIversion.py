@@ -5,8 +5,7 @@ from itertools import product
 from pip._vendor.distlib.compat import raw_input
 import random
 import tkinter as tk
-from combat import Node
-from combat import buildGrid
+from PIL import ImageTK, Image
 
 class App(tk.Tk):
     
@@ -21,7 +20,9 @@ class App(tk.Tk):
         self.columns = 9
         self.cellwidth = 60
         self.cellheight = 60
-
+        self.W = ImageTK.PhotoImage(Image.open("Wumpus.png"))
+        self.H = ImageTK.PhotoImage(Image.open("Hero.png"))
+        self.M = ImageTK.PhotoImage(Image.open("Mage.png"))
         self.rect = {}
         self.oval = {}
 
