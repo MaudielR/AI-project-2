@@ -355,10 +355,10 @@ def evaluatePosition(node, gird):
 print("What size board would you like?")
 width, height = 400, 400
 margin = 5
-global W, H, M, cellSize, valid, playerPieces, agentPieces, D
+global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select
 valid = {}
-
 playerPieces, agentPieces = [], []
+pCord, pMove = (-1, -1), (-1, -1)
 
 
 def setGlobals(IO):
@@ -424,7 +424,6 @@ def main():
     running = True
     node = Node(True, agentPieces, playerPieces)
     AI = 0
-    pCord, pMove = (-1,-1),(-1,-1)
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -443,10 +442,15 @@ def main():
 
                     if AI == 1:
                         cur = grid[pR][pC]
-                        if cur[0] != "P" and cur[1] != "P":
+                        if cur[0] != "P":
                             if cur[0] == "E":
                                 print("This is an empty cell")
-                            elif cur[1] == "T":
+                            elif cur[0] == "T":
+                                if cur[1] == "P" and cur[2] != " ":
+                                    print("You have selected a piece!")
+                                    pCord = (pR, pC)
+                                    AI += 1
+                                else:
                                     print("This is a pit")
                             else:
                                 print("You have selected your opponents piece")
@@ -460,9 +464,10 @@ def main():
                         print(pMove)
                         moveAuto(pCord, pMove, grid, "P", node)
                         AI = 0
-        drawBoard(screen, grid)
         clock.tick(15)
+        screen = drawBoard(screen, grid)
         p.display.flip()
+
 
 
 # Draw board state
@@ -475,10 +480,19 @@ def drawBoard(screen, grid):
                             [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
                 loadPiece(screen, type[1], r, c)
             else:
-                p.draw.rect(screen, p.Color("Grey"),
-                            [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
+                if type[1] == "P":
+                    p.draw.rect(screen, p.Color("Green"),
+                                [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize,
+                                 cellSize])
+                elif type[1] == "A":
+                    p.draw.rect(screen, p.Color("Red"),
+                                [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize,
+                                 cellSize])
+                else:
+                    p.draw.rect(screen, p.Color("Grey"),
+                                [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
                 loadPiece(screen, type[2], r, c)
-
+    return screen
 
 def loadPiece(screen, type, r, c):
     if type == "W":
