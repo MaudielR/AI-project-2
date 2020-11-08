@@ -4,7 +4,9 @@ import sys
 from itertools import product
 import copy
 import time
-
+from GUIversion import App
+import tkinter as tk
+   
 from pip._vendor.distlib.compat import raw_input
 
 
@@ -349,7 +351,9 @@ def evaluatePosition(node, gird):
 def main():
     global valid
     print("What size board would you like?")
+    
     D = int(input())
+    App.__init__(self, D,D )
     playerPieces, agentPieces = [], []
     for i in range(0, D):
         playerPieces.append((D - 1, i))
@@ -382,8 +386,13 @@ def main():
         print("Player Won!")
     else:
         print("Player Lost!")
-
+    
 
 
 if __name__ == '__main__':
     main()
+    root = tk.Tk()
+    board = App(root)
+    board.pack(side="top", fill="both", expand="true", padx=4, pady=4)
+   
+    root.mainloop()
