@@ -72,8 +72,6 @@ def selectValid(grid, D, user):
     else:
         print("The piece you have selected is: " + cur + " at the coordinates (" + str(row) + "," + str(col) + ")")
         return row, col
-
-
 # 1 is Win, -1 is Lose, 0 is Tie
 def fight(user, opponent):
     if user == opponent:
@@ -409,8 +407,8 @@ def buildGrid(D):
 
 
 def main():
-    grid = buildGrid(6)
     setGlobals(int(input()))
+    grid = buildGrid(D)
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     p.init()
     clock = p.time.Clock()
@@ -419,7 +417,7 @@ def main():
     running = True
     node = Node(True, agentPieces, playerPieces)
     AI = 0
-    pCord, pMove = (0,0),(0,0)
+    pCord, pMove = (-1,-1),(-1,-1)
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -435,10 +433,21 @@ def main():
                     pos = p.mouse.get_pos()
                     pC = pos[0] // (cellSize + margin)
                     pR = pos[1] // (cellSize + margin)
+
                     if AI == 1:
-                        pCord = (pR, pC)
-                        AI += 1
-                    else:
+                        cur = grid[pR][pC]
+                        if cur[0] != "P" and cur[1] != "P":
+                            if cur[0] == "E":
+                                print("This is an empty cell")
+                            elif cur[1] == "T":
+                                    print("This is a pit")
+                            else:
+                                print("You have selected your opponents piece")
+                        else:
+                            print("You have selected a piece!")
+                            pCord = (pR, pC)
+                            AI += 1
+                    elif (pR,pC) in valid[pCord]:
                         pMove = (pR, pC)
                         print(pCord)
                         print(pMove)
@@ -449,7 +458,7 @@ def main():
         p.display.flip()
 
 
-# Draw inital board state
+# Draw board state
 def drawBoard(screen, grid):
     for r in range(D):
         for c in range(D):
