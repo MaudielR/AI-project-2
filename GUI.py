@@ -410,10 +410,6 @@ def buildGrid(D):
 
 
 def main():
-<<<<<<< HEAD
-   
-=======
->>>>>>> c9e6417afe9f4afc9c6a872dc4ab8dd6c599f565
     setGlobals(int(input()))
     grid = buildGrid(D)
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
