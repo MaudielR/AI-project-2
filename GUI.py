@@ -19,6 +19,7 @@ class Node(object):
         self.agent = agentPieces
         self.player = playerPieces
 
+
 # Builds a Grid where EE is Empty and TT is for Pit, Agent occupies the top row and Player occupies the bottom row
 def buildGrid(D):
     grid = [["EE " for i in range(D)] for j in range(D)]
@@ -48,6 +49,7 @@ def buildGrid(D):
 
     return grid
 
+
 # Select Valid Coordinates
 def selectValid(grid, D, user):
     print("What piece would you like to move? Enter: (row,col)")
@@ -70,8 +72,6 @@ def selectValid(grid, D, user):
     else:
         print("The piece you have selected is: " + cur + " at the coordinates (" + str(row) + "," + str(col) + ")")
         return row, col
-
-
 # 1 is Win, -1 is Lose, 0 is Tie
 def fight(user, opponent):
     if user == opponent:
@@ -219,6 +219,7 @@ def moveAuto(cords, moveTo, grid, user, node):
         grid[cR][cC] = "EE "
     return grid
 
+
 # The user who wins causes the other user to lose points
 def winAuto(user, node, cord):
     if user == "P":
@@ -283,6 +284,7 @@ def NoPruningMinmax(node, depth, grid):
                     bestMove = validMove
         return minVal, origin, bestMove
 
+
 # Minimax with alpha-beta pruning and evaluation method
 def minmax(node, depth, grid, alpha, beta):
     global valid
@@ -328,6 +330,7 @@ def minmax(node, depth, grid, alpha, beta):
                     break
         return minVal, origin, bestMove
 
+
 def evaluatePosition(node, gird):
     evaluation = 0
     for piece in node.agent:
@@ -349,15 +352,14 @@ def evaluatePosition(node, gird):
     return evaluation + (len(node.agent) - len(node.player))
 
 
-
 print("What size board would you like?")
 width, height = 400, 400
 margin = 5
-global W,H,M,cellSize, valid, playerPieces, agentPieces, D
+global W, H, M, cellSize, valid, playerPieces, agentPieces, D
 valid = {}
 
-
 playerPieces, agentPieces = [], []
+
 
 def setGlobals(IO):
     global W, H, M, cellSize, valid, playerPieces, agentPieces, D
@@ -405,8 +407,12 @@ def buildGrid(D):
 
 
 def main():
+<<<<<<< HEAD
    
+=======
+>>>>>>> c9e6417afe9f4afc9c6a872dc4ab8dd6c599f565
     setGlobals(int(input()))
+    grid = buildGrid(D)
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     p.init()
     clock = p.time.Clock()
@@ -414,24 +420,49 @@ def main():
     screen.fill(p.Color("black"))
     running = True
     node = Node(True, agentPieces, playerPieces)
+    AI = 0
+    pCord, pMove = (-1,-1),(-1,-1)
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
             if e.type == p.MOUSEBUTTONDOWN:
-                print("Starting MinMax Algo")
-                first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
-                print(first)
-                moveAuto(cord, moveTo, grid, "A", node)
+                if AI == 0:
+                    print("Starting MinMax Algo")
+                    first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
+                    print(first)
+                    moveAuto(cord, moveTo, grid, "A", node)
+                    AI += 1
+                else:
+                    pos = p.mouse.get_pos()
+                    pC = pos[0] // (cellSize + margin)
+                    pR = pos[1] // (cellSize + margin)
+
+                    if AI == 1:
+                        cur = grid[pR][pC]
+                        if cur[0] != "P" and cur[1] != "P":
+                            if cur[0] == "E":
+                                print("This is an empty cell")
+                            elif cur[1] == "T":
+                                    print("This is a pit")
+                            else:
+                                print("You have selected your opponents piece")
+                        else:
+                            print("You have selected a piece!")
+                            pCord = (pR, pC)
+                            AI += 1
+                    elif (pR,pC) in valid[pCord]:
+                        pMove = (pR, pC)
+                        print(pCord)
+                        print(pMove)
+                        moveAuto(pCord, pMove, grid, "P", node)
+                        AI = 0
         drawBoard(screen, grid)
         clock.tick(15)
         p.display.flip()
 
 
-
-
-
-# Draw inital board state
+# Draw board state
 def drawBoard(screen, grid):
     for r in range(D):
         for c in range(D):
@@ -457,5 +488,3 @@ def loadPiece(screen, type, r, c):
 
 if __name__ == '__main__':
     main()
-
-
