@@ -1,28 +1,42 @@
-from combat import Node 
+#from combat import Node 
+
 import math
 import sys
 from itertools import product
 from pip._vendor.distlib.compat import raw_input
 import random
 import tkinter as tk
-from PIL import ImageTK, Image
+#from PIL import ImageTK, Image
 
-class App(tk.Tk):
-    
+class App(tk.Frame):
+   
+    #def  int lengthOfGrid():
+     #   for rows in buildGrid():
+      #      return rows.length
     #create the canvas 
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-
+    def __init__(self, parent, rows, columns ):
+        '''size is the size of a square, in pixels'''
+        self.size=32
+        self.rows = rows
+        self.columns = columns
         
-        self.canvas = tk.Canvas(self, width=540, height=540, borderwidth=0, highlightthickness=0)
-        self.canvas.pack(side="top", fill="both", expand="true")
-        self.rows = 9
-        self.columns = 9
-        self.cellwidth = 60
-        self.cellheight = 60
-        self.W = ImageTK.PhotoImage(Image.open("Wumpus.png"))
-        self.H = ImageTK.PhotoImage(Image.open("Hero.png"))
-        self.M = ImageTK.PhotoImage(Image.open("Mage.png"))
+        self.pieces = {}
+        self.color1="white",
+        self.color2="blue"
+        canvas_width = columns * size
+        canvas_height = rows * size
+
+        tk.Frame.__init__(self, parent)
+        self.canvas = tk.Canvas(self, borderwidth=0, highlightthickness=0,
+                                width=canvas_width, height=canvas_height, background="bisque")
+        self.canvas.pack(side="top", fill="both", expand=True, padx=2, pady=2)
+
+        # this binding will cause a refresh if the user interactively
+        # changes the window size
+        
+        #self.W = ImageTK.PhotoImage(Image.open("Wumpus.png"))
+        #self.H = ImageTK.PhotoImage(Image.open("Hero.png"))
+        #self.M = ImageTK.PhotoImage(Image.open("Mage.png"))
         self.rect = {}
         self.oval = {}
 
@@ -52,13 +66,13 @@ class App(tk.Tk):
             fill=color,
             tags=("token",),)
 
-        for column in range(9):
-            for row in range(9):
-                x1 = column*self.cellwidth
-                y1 = row * self.cellheight
-                x2 = x1 + self.cellwidth
-                y2 = y1 + self.cellheight
-                self.rect[row,column] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="white", tags="rect")
+        #for column in range(10):
+           # for row in range(10):
+            #x1 = column*self.cellwidth
+           # y1 = row * self.cellheight
+           # x2 = x1 + self.cellwidth
+            #y2 = y1 + self.cellheight
+          #  self.rect[row,column] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="white", tags="rect")
             
             #self.oval[row,column] = self.canvas.create_oval(x1+2,y1+2,x2-2,y2-2, fill="blue", tags="oval")
     def drag_start(self, event):
@@ -88,8 +102,12 @@ class App(tk.Tk):
 
         
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    root = tk.Tk()
+    board = App(root)
+    board.pack(side="top", fill="both", expand="true", padx=4, pady=4)
+   
+    root.mainloop()
+    
 
 
 #root = Tk()
