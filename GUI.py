@@ -364,6 +364,9 @@ playerPieces, agentPieces = [], []
 def setGlobals(IO):
     global W, H, M, cellSize, valid, playerPieces, agentPieces, D
     D = IO
+    while D%3 != 0:
+        print("Size of the board must be a multiple of 3")
+        D = int(input())
     cellSize = (width // D) - margin
     W = p.transform.scale(p.image.load("Wumpus.png"), (cellSize, cellSize))
     H = p.transform.scale(p.image.load("Hero.png"), (cellSize, cellSize))
