@@ -386,7 +386,6 @@ def setGlobals(IO):
 # Builds a Grid where EE is Empty and TT is for Pit, Agent occupies the top row and Player occupies the bottom row
 def buildGrid(D):
     grid = [["EE " for i in range(D)] for j in range(D)]
-
     for col in range(1, D - 1):
         pits = (D / 3) - 1
         while pits != 0:
