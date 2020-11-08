@@ -28,7 +28,7 @@ def buildGrid(D):
                 grid[row][col] = "TT "
                 pits -= 1
 
-    count = 0;
+    count = 0
     for row in range(0, D):
         if count == 0:
             grid[0][row] = "AW "
