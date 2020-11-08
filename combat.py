@@ -381,34 +381,6 @@ def minmax(position, node, depth, grid):
 
         return minVal, origin, bestMove
 
-def alphabeta(position, node, depth, alpha, beta, maximizingPlayer):
-    global valid
-    if depth == 0 or (len(node.agent) == 0 or len(node.player) == 0):
-        return evaluatePosition(node, grid), position
-    if node.maximizingPlayer:
-        maxVal = -10000000
-        bestMove, origin = None, None
-        prioirty_queue = []
-
-        for piece in node.agent:
-            for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
-        while child == prioirty_queue.pop():
-            value = alphabeta(self, child, depth - 1, alpha, beta, False)
-            Maxvalue = max(Maxvalue, value)
-            if beta <= alpha:
-                break
-        return Maxvalue
-    else:
-        Minvalue = maxsize
-        for child in node:
-            prioirty_queue.push(child, -h(child))
-        while child == prioirty_queue.pop():
-            value = alphabeta(self, child, depth - 1, alpha, beta, True)
-            Minvalue = min(Minvalue, value)
-            beta = min(beta, value)
-            if beta <= alpha:
-                break
-        return minVal, origin, bestMove
 
 def evaluatePosition(node, gird):
     evaluation = 0
