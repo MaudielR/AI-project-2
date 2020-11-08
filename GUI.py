@@ -421,6 +421,8 @@ def main():
     node = Node(True, agentPieces, playerPieces)
     AI = 0
     while running:
+        if len(node.player) == 0 or len(node.agent) == 0:
+            break
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
@@ -428,7 +430,6 @@ def main():
                 if AI == 0:
                     print("Starting MinMax Algo")
                     first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
-                    print(first)
                     moveAuto(cord, moveTo, grid, "A", node)
                     AI += 1
                 else:
@@ -456,13 +457,18 @@ def main():
                             AI += 1
                     elif (pR,pC) in valid[pCord]:
                         pMove = (pR, pC)
-                        print(pCord)
-                        print(pMove)
                         moveAuto(pCord, pMove, grid, "P", node)
                         AI = 0
         clock.tick(15)
         screen = drawBoard(screen, grid)
         p.display.flip()
+    if len(node.player) == 0 and len(node.agent) == 0:
+        print("TIE!")
+    elif len(node.agent) == 0:
+        print("Player Won!")
+    else:
+        print("Player Lost!")
+    p.quit
 
 
 
