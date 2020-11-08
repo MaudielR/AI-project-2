@@ -108,6 +108,12 @@ def neighborsSet(D, cell):
             n.append(x)
     return n
 
+def neighborSetScalable(D, cell):
+    n = []
+    for x in product(*(range(coords - (D//3), coords + 1 + (D//3)) for coords in cell)):
+        if x != cell and all(0 <= n < D for n in x):
+            n.append(x)
+    return n
 
 # If someone has fallen in a pit TT is changed to T[User who fell in] if both users have fallen in it just becomes EE
 def move(cords, grid, D, user, node):
@@ -308,7 +314,6 @@ def minmax(node, depth, grid, alpha, beta):
                 if maxVal == val:
                     origin = piece
                     bestMove = validMove
-
                 if beta <= alpha:
                     break
         return maxVal, origin, bestMove
@@ -330,7 +335,6 @@ def minmax(node, depth, grid, alpha, beta):
                     break
         return minVal, origin, bestMove
 
-
 def evaluatePosition(node, gird):
     evaluation = 0
     for piece in node.agent:
@@ -341,7 +345,7 @@ def evaluatePosition(node, gird):
         else:
             pT = pieceType[1]
         # Every player piece near agent piece
-        for nearPlayer in list(filter(lambda x: x not in node.agent and x in node.player, valid[piece])):
+        for nearPlayer in list(filter(lambda x: x not in node.agent and x in node.player,neighborSetScalable(D,piece))):
             nR, nC = nearPlayer
             nearType = gird[nR][nC]
             if nearType[0] == "T":
@@ -349,7 +353,7 @@ def evaluatePosition(node, gird):
             else:
                 nT = nearType[1]
             evaluation += fight(pT, nT)
-    return evaluation + (len(node.agent) - len(node.player))
+    return evaluation + ((len(node.agent) - len(node.player))*1.5)
 
 
 print("What size board would you like?")
@@ -429,10 +433,11 @@ def main():
             if e.type == p.MOUSEBUTTONDOWN:
                 if AI == 0:
                     print("Starting MinMax Algo")
-                    first, cord, moveTo = minmax(node, 4, grid, -100000, 1000000)
+                    first, cord, moveTo = minmax(node,4, grid, -100000, 1000000)
                     moveAuto(cord, moveTo, grid, "A", node)
                     AI += 1
                 else:
+                    print("You may now select a piece")
                     pos = p.mouse.get_pos()
                     pC = pos[0] // (cellSize + margin)
                     pR = pos[1] // (cellSize + margin)
@@ -455,10 +460,12 @@ def main():
                             print("You have selected a piece!")
                             pCord = (pR, pC)
                             AI += 1
-                    elif (pR,pC) in valid[pCord]:
+                    elif (pR,pC) in list(filter(lambda x: x not in node.player, valid[pCord])):
                         pMove = (pR, pC)
                         moveAuto(pCord, pMove, grid, "P", node)
                         AI = 0
+                    else:
+                        print("This is an invalid piece")
         clock.tick(15)
         screen = drawBoard(screen, grid)
         p.display.flip()
