@@ -1,13 +1,9 @@
-import random
-
-import pygame as p
+import copy
 import math
 import random
-import sys
 from itertools import product
-import copy
-import time
 
+import pygame as p
 from pip._vendor.distlib.compat import raw_input
 
 
