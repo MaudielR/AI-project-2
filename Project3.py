@@ -2,7 +2,6 @@ import copy
 import math
 import random
 from itertools import product
-
 import pygame as p
 from pip._vendor.distlib.compat import raw_input
 
@@ -249,43 +248,43 @@ def updatePosition(user, node, cord, moveTo):
 
 
 # Minimax algorithm without Alpha-Beta pruning, still uses the evaluation method. But it's slow
-def NoPruningMinmax(node, depth, grid):
-    global valid
-    if depth == 0 or (len(node.agent) == 0 or len(node.player) == 0):
-        return evaluatePosition(node, grid), depth
-    if node.maximizingPlayer:
-        maxVal = -10000000
-        bestMove, origin = None, None
-        # Look at every piece the current user possesses
-        for piece in node.agent:
-            # Filter Valid Coordinates by List of User Pieces
-            for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
-                tempGrid = copy.deepcopy(grid)  # Shallow copy of the Grid so as not to effect the actual game
-                next = Node(False, copy.deepcopy(node.agent), copy.deepcopy(node.player))
-                # Here we updated user and opponent lists within the next node on the temporary grid
-                moveAuto(piece, validMove, tempGrid, "A", next)
-                # Now we get the Max, we stay on the temporary grid cause algorithm isn't finished
-                val = NoPruningMinmax(next, depth - 1, tempGrid)[0]
-                maxVal = max(maxVal, val)
-                if maxVal == val:
-                    origin = piece
-                    bestMove = validMove
-
-        return maxVal, origin, bestMove
-    else:
-        minVal = 100000000
-        bestMove, origin = None, None
-        for piece in node.player:
-            for validMove in list(filter(lambda x: x not in node.player, valid[piece])):
-                tempGrid = copy.deepcopy(grid)
-                next = Node(True, copy.deepcopy(node.agent), copy.deepcopy(node.player))
-                moveAuto(piece, validMove, tempGrid, "P", next)
-                val = NoPruningMinmax(next, depth - 1, tempGrid)[0]
-                minVal = min(minVal, val)
-                if minVal == val:
-                    origin = piece
-                    bestMove = validMove
-        return minVal, origin, bestMove
+# def NoPruningMinmax(node, depth, grid):
+#     global valid
+#     if depth == 0 or (len(node.agent) == 0 or len(node.player) == 0):
+#         return evaluatePosition(node, grid), depth
+#     if node.maximizingPlayer:
+#         maxVal = -10000000
+#         bestMove, origin = None, None
+#         # Look at every piece the current user possesses
+#         for piece in node.agent:
+#             # Filter Valid Coordinates by List of User Pieces
+#             for validMove in list(filter(lambda x: x not in node.agent, valid[piece])):
+#                 tempGrid = copy.deepcopy(grid)  # Shallow copy of the Grid so as not to effect the actual game
+#                 next = Node(False, copy.deepcopy(node.agent), copy.deepcopy(node.player))
+#                 # Here we updated user and opponent lists within the next node on the temporary grid
+#                 moveAuto(piece, validMove, tempGrid, "A", next)
+#                 # Now we get the Max, we stay on the temporary grid cause algorithm isn't finished
+#                 val = NoPruningMinmax(next, depth - 1, tempGrid)[0]
+#                 maxVal = max(maxVal, val)
+#                 if maxVal == val:
+#                     origin = piece
+#                     bestMove = validMove
+#
+#         return maxVal, origin, bestMove
+#     else:
+#         minVal = 100000000
+#         bestMove, origin = None, None
+#         for piece in node.player:
+#             for validMove in list(filter(lambda x: x not in node.player, valid[piece])):
+#                 tempGrid = copy.deepcopy(grid)
+#                 next = Node(True, copy.deepcopy(node.agent), copy.deepcopy(node.player))
+#                 moveAuto(piece, validMove, tempGrid, "P", next)
+#                 val = NoPruningMinmax(next, depth - 1, tempGrid)[0]
+#                 minVal = min(minVal, val)
+#                 if minVal == val:
+#                     origin = piece
+#                     bestMove = validMove
+#         return minVal, origin, bestMove
 
 
 # Minimax with alpha-beta pruning and evaluation method
@@ -351,22 +350,26 @@ def evaluatePosition(node, gird):
                 nT = nearType[1]
             evaluation += fight(pT, nT)
     return evaluation + ((len(node.agent) - len(node.player))*1.5)
-
+def Information_Gain(S,A):
+    entropy = Entropy(S)
+    return entropy -
 #Decision Tree
-# S is a set of examples
+# S = turns taken
+#not sure on most of the psudo code online
 def Build_Decision_Tree(S, Attributes):
-    if S == ' ':
+    if S == 'Turn 0 ':
         return
     else:
-        IGbest = -1;
+        BestGain =Information_Gain(S,A)
+        BestGain = -1;
         for a in Attributes:
-            S_prime = S//a;
-            if IGbest(S_prime) > IGbest(S):
+            S_prime = S/a;
+            if Information_Gain(S_prime,A) > Information_Gain(S,A):
                 IGbest = IGbest(S)
                 a_best = a
-        S_prime = S//a
+        S_prime = S/a
         for all in S_prime:
-            Build_Decision_Tree(S_prime,Attributes//a_best)
+            Build_Decision_Tree(S_prime,Attributes/a_best)
 
 
 print("What size board would you like?")
@@ -424,11 +427,33 @@ def buildGrid(D):
 
     return grid
 
+def buildGridTree(D):
+    x = 1/21
+    grid = [[x for i in range(D)] for j in range(D)]
 
+    count = 0
+    for row in range(0, D):
+        if count == 0:
+            grid[0][row] = 1
+            grid[D - 1][row] = 0
+            count += 1
+        elif count == 1:
+            grid[0][row] = 1
+            grid[D - 1][row] = 0
+            count += 1
+        else:
+            grid[0][row] = 1
+            grid[D - 1][row] = 0
+            count = 0
+
+    return grid
 def main():
     setGlobals(int(input()))
     grid = buildGrid(D)
+    grid2 = buildGridTree(D)
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
+    print("-----------------------")
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid2]))
     p.init()
     clock = p.time.Clock()
     screen = p.display.set_mode((width, height))
