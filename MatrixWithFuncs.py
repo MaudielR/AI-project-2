@@ -2,6 +2,11 @@ import copy
 import math
 import random
 from itertools import product
+
+print("What size board would you like?")
+global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select
+D = int(input())
+
 def buildGrid(D):
     # each function will be called, TRUE OR FALSE just means if it gives off a tell that it's near
 
@@ -50,11 +55,11 @@ def P_Wumpus(X, Y):
     #Before anyting Call funciton to see if there is a sing of Adjacent player
 
     P_Wumpus = 1
-    if X == 0 and Y != 0:
-        return P_Wumpus
+    if X == 0 and Y == 0:
+        return 0
 
     else:
-        return 0
+        return P_Wumpus
         # return 1 if turn 1 not in first column
 
         # return 0 if turn 1 and not in first row
@@ -62,27 +67,35 @@ def P_Wumpus(X, Y):
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
 
 
+def Observation(X,Y):
+    #default value untill we work on this
+    return False
+
+
+def neighbors(x,y):
+    return
 
 
 def P_Hero(X, Y):
-    P_Wumpus = 1
-    if X == 0 and Y!=0:
-        return P_Wumpus
-    else:
-        return 0
-        # return 1 if turn 1 not in first column
-        # return 0 if turn 1 and not in first row
+        #first we need to find true false variable for observation
+        ObVi= Observation(X,Y)
+        # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
+        P_Wumpus = 1
+        if X == 0 and Y == 0:
+            return 0
 
-        # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
+        else:
+            return P_Wumpus
+
 
 
 def P_Mage(X, Y):
     P_Wumpus = 1
-    if X == 0 and Y != 0:
-        return P_Wumpus
+    if X == 0 and Y == 0:
+        return 0
 
     else:
-        return 0 # return 1 if turn 1 not in first column
+        return P_Wumpus # return 1 if turn 1 not in first column
 
         # return 0 if turn 1 and not in first row
 
@@ -106,8 +119,6 @@ def P_Pits(D):
 
 
 def main():
-    print("What size board would you like?")
-    D = int(input())
 
     P_Wumpus(0, 0)
     P_Hero(0, 0)
