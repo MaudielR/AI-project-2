@@ -4,19 +4,19 @@ import random
 from itertools import product
 def buildGrid(D):
     # each function will be called, TRUE OR FALSE just means if it gives off a tell that it's near
-    print("here")
-    probability = P_Pits(D)
-    grid = [[probability for i in range(D)] for j in range(D)]
-    print("here")
+
+    probability = P_Pits(D) + P_Mage(0,0) + P_Hero(0,0)+P_Wumpus(0,0)
+    grid = [[[probability,"EE "] for i in range(D)] for j in range(D)]
+
     # probability = P_Hero() + P_Mage() + P_Wumpus() + P_Pits()
     for col in range(1, D - 1):
         pits = (D / 3) - 1
         while pits != 0:
             row = random.randint(0, D - 1)
-            if grid[row][col] == P_Pits(D):
+            if grid[row][col] == [P_Pits(D),"EE "]:
                 grid[row][col] = "TT "
                 pits -= 1
-    print("here")
+
     count = 0
     for row in range(0, D):
         if count == 0:
@@ -37,7 +37,7 @@ def buildGrid(D):
             grid[D - 1][row] = "PM "
             grid[D - 1][row] = P_Mage(D - 1, row)
             count = 0
-    print("here")
+
     return grid
 
 
@@ -50,8 +50,11 @@ def P_Wumpus(X, Y):
     #Before anyting Call funciton to see if there is a sing of Adjacent player
 
     P_Wumpus = 1
-    if X == 0:
+    if X == 0 and Y != 0:
         return P_Wumpus
+
+    else:
+        return 0
         # return 1 if turn 1 not in first column
 
         # return 0 if turn 1 and not in first row
@@ -63,10 +66,11 @@ def P_Wumpus(X, Y):
 
 def P_Hero(X, Y):
     P_Wumpus = 1
-    if X == 0:
+    if X == 0 and Y!=0:
         return P_Wumpus
+    else:
+        return 0
         # return 1 if turn 1 not in first column
-
         # return 0 if turn 1 and not in first row
 
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
@@ -74,9 +78,11 @@ def P_Hero(X, Y):
 
 def P_Mage(X, Y):
     P_Wumpus = 1
-    if X == 0:
+    if X == 0 and Y != 0:
         return P_Wumpus
-        # return 1 if turn 1 not in first column
+
+    else:
+        return 0 # return 1 if turn 1 not in first column
 
         # return 0 if turn 1 and not in first row
 
