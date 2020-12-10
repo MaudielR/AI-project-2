@@ -529,10 +529,16 @@ def BuildProbability2DArray(grid, D, agentpieces, playerpieces):
     for x in range(D):
         for y in range(D):
             if(x==0):
-                probarray[x][y] = [1/D, 0, 0, 0]
+                probarray[x][y] = [0,0,0,0]
 
-def newWumpusProb(grid, enemypieces, PWxy ):
-    int newProb = (1-(1/enemypieces.len()))*PWxy + (for )
+
+
+
+def newWumpusProb(grid, cell, enemypieces, PWxy):
+
+    int newProb = (1-(1/enemypieces.len()))*PWxy + ()
+    try:
+        
 
 
 if __name__ == '__main__':
