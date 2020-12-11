@@ -5,8 +5,7 @@ import random
 from itertools import product
 from pip._vendor.distlib.compat import raw_input
 print("What size board would you like?")
-global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select
-data_set = []
+global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select, data_set
 D = int(input())
 
 class Node(object):
@@ -20,23 +19,17 @@ class Node(object):
 
 def buildGrid(D):
     # each function will be called, TRUE OR FALSE just means if it gives off a tell that it's near
-    M = 0
-    H=0
-    W= P_Wumpus(0,0)
-    P = P_Pits(D)
-
+    global data_set
+    data_set = [[[P_Wumpus(i,j), P_Mage(i,j), P_Hero(i,j)] for i in range(D)] for j in range(D)]
     grid = [["EE " for i in range(D)] for j in range(D)]
-    x = 0
-    y = 0
-    for row in grid:
-        for col in row:
-            data_set.append([ P_Pits(D),P_Wumpus(x,y), P_Hero(x,y), P_Mage(x,y)])
+    x = 1
+    y = 1
+    for row in range(1, D-1):
+        for col in range(0, D):
+            data_set[row][col] = ([P_Wumpus(x,y), P_Hero(x,y), P_Mage(x,y), P_Pits(D)])
             y= y+1
         x= x+1
-    print("THIS IS DATA SET ______")
-    print(data_set)
-    print(" ______")
-    # probability = P_Hero() + P_Mage() + P_Wumpus() + P_Pits()
+
     for col in range(1, D - 1):
         pits = (D / 3) - 1
         while pits != 0:
@@ -49,15 +42,21 @@ def buildGrid(D):
     for row in range(0, D):
         if count == 0:
             grid[0][row] = "AW "
+            data_set[0][row][0]=1
             grid[D - 1][row] = "PW "
+            data_set[D-1][row][0] = 1
             count += 1
         elif count == 1:
             grid[0][row] = "AH "
+            data_set[0][row][1] = 1
             grid[D - 1][row] = "PH "
+            data_set[D - 1][row][1] = 1
             count += 1
         else:
             grid[0][row] = "AM "
+            data_set[0][row][2] =1
             grid[D - 1][row] = "PM "
+            data_set[D - 1][row][2] = 1
             count = 0
 
     return grid
@@ -194,17 +193,16 @@ def neighbors(x,y):
 
 
 def P_Wumpus(X, Y):
+    global data_set
 
     #Before anyting Call funciton to see if there is a sing of Adjacent player
 
-    P_Wum = 1
-    if X == 0 and Y == 0:
-        return True
-
-    else:
-        return 2
+    return 0;
         # return 1 if turn 1 not in first column
 
+    #W = int(data_set[X][Y][2])
+        # Prime_of_W =
+        # P_Wum = 1/D * data_set[X][Y][1]
         # return 0 if turn 1 and not in first row
 
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
@@ -220,21 +218,15 @@ def P_Hero(X, Y):
         # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
         P_Wumpus = 1
 
-        if X == 0 and Y == 1:
-            return True
 
-        else:
-            return 2
+        return 0
 
 
 
 def P_Mage(X, Y):
     P_Wumpus = 1
-    if X == 0 and Y == 2:
-        return True
 
-    else:
-        return 2 # return 1 if turn 1 not in first column
+    return 0 # return 1 if turn 1 not in first column
 
         # return 0 if turn 1 and not in first row
 
@@ -242,11 +234,12 @@ def P_Mage(X, Y):
 
 
 def P_Pits(D):
-    P_Wumpus = 1 / D
-    return P_Wumpus
-        # return 1 if turn 1 not in first column
+    pits = (D / 3) - 1
+    if pits != 0:
+        P_Wumpus = pits /((D*D)-(2*D))
+        return round(P_Wumpus,2)
 
-        # return 0 if turn 1 and not in first row
+
 
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
 
@@ -284,8 +277,7 @@ def main():
     P_Mage(0, 0)
     grid = buildGrid(D)
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-    print(data_set)
-
+    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in data_set]))
 
 if __name__ == '__main__':
     main()
