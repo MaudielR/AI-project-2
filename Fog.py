@@ -353,7 +353,7 @@ def evaluatePosition(node, gird):
 
 
 print("What size board would you like?")
-width, height = 400, 400
+width, height = 600, 600
 margin = 5
 global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select
 valid = {}
@@ -378,7 +378,13 @@ def setGlobals(IO):
         playerPieces.append((D - 1, i))
         agentPieces.append((0, i))
 
+
+
 def main():
+
+    temp = [[1 for i in range(6)] for j in range(6)]
+
+
     setGlobals(int(input()))
     grid = buildGrid(D)
     #print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
@@ -394,10 +400,10 @@ def main():
     Off = font.render('Off',True, p.Color("Black"));
     fog = False
     while running:
-        p.draw.rect(screen, p.Color("Green"), [410, 50, 80, 40])
-        p.draw.rect(screen, p.Color("Red"), [410, 150, 80, 40])
-        screen.blit(On, (430, 55))
-        screen.blit(Off, (430, 155))
+        p.draw.rect(screen, p.Color("Green"), [610, 50, 80, 40])
+        p.draw.rect(screen, p.Color("Red"), [610, 150, 80, 40])
+        screen.blit(On, (630, 55))
+        screen.blit(Off, (630, 155))
         if len(node.player) == 0 or len(node.agent) == 0:
             break
         for e in p.event.get():
@@ -447,7 +453,7 @@ def main():
                     else:
                         print("This is an invalid piece")
         clock.tick(15)
-        screen = drawBoard(screen, grid, fog)
+        screen = drawBoard(screen, grid, fog,temp)
         p.display.flip()
     if len(node.player) == 0 and len(node.agent) == 0:
         print("TIE!")
@@ -460,7 +466,8 @@ def main():
 
 
 # Draw board state
-def drawBoard(screen, grid, fog):
+def drawBoard(screen, grid, fog, probability):
+    font = p.font.SysFont('Calibri', 20);
     for r in range(D):
         for c in range(D):
             type = grid[r][c]
@@ -469,6 +476,7 @@ def drawBoard(screen, grid, fog):
                     p.draw.rect(screen, p.Color("Grey"),
                                 [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize,
                                  cellSize])
+
                 else:
                     p.draw.rect(screen, p.Color("White"),
                                 [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
@@ -486,6 +494,9 @@ def drawBoard(screen, grid, fog):
                     p.draw.rect(screen, p.Color("Grey"),
                                 [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
                 loadPiece(screen, type[2], r, c)
+            num = font.render(str(probability[r][c]), True, p.Color("Red"))
+            screen.blit(num, p.Rect((margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize,
+                                    cellSize))
     return screen
 
 def loadPiece(screen, type, r, c):
