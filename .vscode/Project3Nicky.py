@@ -99,9 +99,134 @@ def Observation(node,grid,X,Y):
     return observable
 
 
+def neighbors(x,y,type):
+    global data_set
+    #Where neighbors(x,y) are the nodes within one move of (x,y)
+    problist = []
+    prob = 0
+    Left =0
+    Right=0
+    up=0
+    down=0
+    upLeft=0
+    upRight=0
+    downLeft=0
+    downRight=0
+    if x-1 <0:
+        if y -1 < 0:
+            Right= data_set[x][y+1][type]
+            down = data_set[x+1][y][type]
+            downRight = data_set[x+1][y+1][type]
+            problist.append(Right)
+            problist.append(Left)
+            problist.append(downRight)
+        elif y+1> D:
+            Left = data_set[x][y-1][type]
+            down = data_set[x+1][y][type]
+            downLeft = data_set[x+1][y-1][type]
+            problist.append(Left)
+            problist.append(down)
+            problist.append(downLeft)
 
-def neighbors(x,y):
-    return
+        else:
+            Left = data_set[x][y-1][type]
+            Right = data_set[x][y+1][type]
+            down = data_set[x+1][y][type]
+            downLeft = data_set[x+1][y-1][type]
+            downRight = data_set[x+1][y+1][type]
+            problist.append(Left)
+            problist.append(Right)
+            problist.append(down)
+            problist.append(downLeft)
+            problist.append(downRight)
+
+
+
+    if x+1 >D:
+        if y-1 <0:
+            Right = data_set[x][y + 1][type]
+            up = data_set[x-1][y][type]
+            upRight = data_set[x-1][y +1][type]
+            problist.append(Right)
+            problist.append(up)
+            problist.append(upRight)
+
+        elif y+1> D:
+            up = data_set[x - 1][y][type]
+            Left = data_set[x][y-1][type]
+            upLeft = data_set[x-1][y -1][type]
+            problist.append(up)
+            problist.append(Left)
+            problist.append(upLeft)
+
+        else:
+            Left = data_set[x][y-1][type]
+            Right = data_set[x][y+1][type]
+            up= data_set[x-1][y][type]
+            upLeft= data_set[x-1][y-1][type]
+            upRight= data_set[x-1][y+1][type]
+            problist.append(Left)
+            problist.append(Right)
+            problist.append(up)
+            problist.append(upLeft)
+            problist.append(upRight)
+
+
+
+
+    else:
+        if y-1 < 0:
+
+            Right = data_set[x][y+1][type]
+            down = data_set[x+1][y][type]
+            up = data_set[x-1][y][type]
+            upRight = data_set[x-1][y+1][type]
+            downRight = data_set[x+1][y+1][type]
+            problist.append(Right)
+            problist.append(down)
+            problist.append(up)
+            problist.append(upRight)
+            problist.append(downRight)
+
+
+
+        elif y+1 > D:
+            Left =  data_set[x][y-1][type]
+            up = data_set[x-1][y][type]
+            down = data_set[x+1][y][type]
+            upLeft = data_set[x-1][y-1][type]
+            downLeft = data_set[x+1][y-1][type]
+
+            problist.append(Left)
+            problist.append(up)
+            problist.append(down)
+            problist.append(upLeft)
+            problist.append(downLeft)
+        else:
+            up = data_set[x-1][y][type]
+            down = data_set[x+1][y][type]
+            Left = data_set[x][y-1][type]
+            Right = data_set[x][y+1][type]
+            upLeft = data_set[x-1][y-1][type]
+            upRight = data_set[x-1][y+1][type]
+            downLeft = data_set[x+1][y-1][type]
+            downRight = data_set[x+1][y+1][type]
+
+            problist.append(Left)
+            problist.append(up)
+            problist.append(down)
+            problist.append(upLeft)
+            problist.append(downLeft)
+            problist.append(Right)
+            problist.append(upRight)
+            problist.append(downRight)
+
+
+    c = len(problist)
+    for x in problist:
+        prob += (x * (1/(c*len(agentPieces))))
+    return prob
+
 
 
 def P_Hero(X, Y):
