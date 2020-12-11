@@ -26,13 +26,13 @@ def buildGrid(D):
     P = P_Pits(D)
 
     grid = [["EE " for i in range(D)] for j in range(D)]
+    x = 0
+    y = 0
     for row in grid:
-        x = 0
         for col in row:
-            y = 0
-            data_set.append([P_Pits(D), P_Wumpus(x,y), P_Hero(x,y), P_Mage(x,y)])
-            y+1
-        x+1
+            data_set.append([ P_Pits(D),P_Wumpus(x,y), P_Hero(x,y), P_Mage(x,y)])
+            y= y+1
+        x= x+1
     print("THIS IS DATA SET ______")
     print(data_set)
     print(" ______")
@@ -219,8 +219,7 @@ def P_Hero(X, Y):
         #ObVi= Observation(X,Y)
         # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
         P_Wumpus = 1
-        print(X)
-        print(Y)
+
         if X == 0 and Y == 1:
             return True
 
