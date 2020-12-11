@@ -7,6 +7,15 @@ print("What size board would you like?")
 global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select
 D = int(input())
 
+class Node(object):
+    # Maximizing player is true if Agent, False if User
+    # userPieces and opponentPieces is a list of all pieces
+    def __init__(self, maximizingPlayer, agentPieces, playerPieces):
+        self.maximizingPlayer = maximizingPlayer
+        self.agent = agentPieces
+        self.player = playerPieces
+
+
 def buildGrid(D):
     # each function will be called, TRUE OR FALSE just means if it gives off a tell that it's near
 
@@ -68,9 +77,51 @@ def P_Wumpus(X, Y):
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
 
 
-def Observation(X,Y):
-    #default value untill we work on this
-    return False
+#Scans a radius around the cell. Radius of 1 is 3x3, radius of 2 is 5x5
+def scan(radius, cell):
+    n = []
+    for x in product(*(range(coords - radius, coords + 1 + radius) for coords in cell)):
+        if x != cell and all(0 <= n < (radius*3) for n in x):
+            n.append(x)
+    return n
+
+
+def Observation(node,grid,X,Y):
+    observations = {}
+    playerArea = scan(1,[X,Y])
+    #Get all Agents Near Player
+    for nearPlayer in list(filter(lambda x: x not in node.agent and x in node.player,scan(2,[X,Y]))):
+        nR, nC = nearPlayer
+        nearType = grid[nR][nC]
+        enemyArea = scan(3,[X,Y])
+        #All cells where the player can observe
+        observable = filter(lambda x: x not in playerArea,enemyArea)
+        for cell in observable:
+            #If this doesn't work add a if(not in)
+            observations[cell] += nearType[1]
+    return observations
+
+
+
+def evaluatePosition(node, gird):
+    evaluation = 0
+    for piece in node.agent:
+        pR, pC = piece
+        pieceType = gird[pR][pC]
+        if pieceType[0] == "T":
+            pT = pieceType[2]
+        else:
+            pT = pieceType[1]
+        # Every player piece near agent piece
+        for nearPlayer in list(filter(lambda x: x not in node.agent and x in node.player,neighborSetScalable(D,piece))):
+            nR, nC = nearPlayer
+            nearType = gird[nR][nC]
+            if nearType[0] == "T":
+                nT = nearType[2]
+            else:
+                nT = nearType[1]
+            evaluation += fight(pT, nT)
+    return evaluation + ((len(node.agent) - len(node.player))*1.5)
 
 
 def neighbors(x,y):

@@ -178,8 +178,6 @@ def splitdataset(balance_data):
 
 
 
-
-
 def find_best_split(grid):
     """Find the best question to ask by iterating over every feature / value
     and calculating the information gain."""
