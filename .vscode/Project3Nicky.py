@@ -102,28 +102,6 @@ def Observation(node,grid,X,Y):
     return observations
 
 
-
-def evaluatePosition(node, gird):
-    evaluation = 0
-    for piece in node.agent:
-        pR, pC = piece
-        pieceType = gird[pR][pC]
-        if pieceType[0] == "T":
-            pT = pieceType[2]
-        else:
-            pT = pieceType[1]
-        # Every player piece near agent piece
-        for nearPlayer in list(filter(lambda x: x not in node.agent and x in node.player,neighborSetScalable(D,piece))):
-            nR, nC = nearPlayer
-            nearType = gird[nR][nC]
-            if nearType[0] == "T":
-                nT = nearType[2]
-            else:
-                nT = nearType[1]
-            evaluation += fight(pT, nT)
-    return evaluation + ((len(node.agent) - len(node.player))*1.5)
-
-
 def neighbors(x,y):
     return
 
