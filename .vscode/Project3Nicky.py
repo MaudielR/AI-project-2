@@ -4,7 +4,7 @@ import random
 from itertools import product
 
 print("What size board would you like?")
-global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select
+global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select, pitLocation
 D = int(input())
 
 class Node(object):
@@ -29,6 +29,7 @@ def buildGrid(D):
             row = random.randint(0, D - 1)
             if grid[row][col] == [P_Pits(D),"EE "]:
                 grid[row][col] = "TT "
+                pitLocation.add((row,col))
                 pits -= 1
 
     count = 0
@@ -85,21 +86,18 @@ def scan(radius, cell):
             n.append(x)
     return n
 
-
+#Returns a string of all observations. If String length == 0 then there are no observations
 def Observation(node,grid,X,Y):
-    observations = {}
-    playerArea = scan(1,[X,Y])
-    #Get all Agents Near Player
-    for nearPlayer in list(filter(lambda x: x not in node.agent and x in node.player,scan(2,[X,Y]))):
-        nR, nC = nearPlayer
-        nearType = grid[nR][nC]
-        enemyArea = scan(3,[X,Y])
-        #All cells where the player can observe
-        observable = filter(lambda x: x not in playerArea,enemyArea)
-        for cell in observable:
-            #If this doesn't work add a if(not in)
-            observations[cell] += nearType[1]
-    return observations
+    observable = ""
+    #Gets all cells which have an opponent piece
+    observations = list(filter(lambda x: x not in node.agent and x not in pitLocation and x in node.player,scan(1,[X,Y])))
+    if len(observations) >= 0:
+        for obv in observations :
+            r, c = obv
+            nearType = grid[r][c]
+            observable += nearType[1]
+    return observable
+
 
 
 def neighbors(x,y):
@@ -151,7 +149,7 @@ def P_Pits(D):
 
 
 def main():
-
+    pitLocation = set()
     P_Wumpus(0, 0)
     P_Hero(0, 0)
     P_Mage(0, 0)
