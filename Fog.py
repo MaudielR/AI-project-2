@@ -392,6 +392,7 @@ def main():
     font =  p.font.SysFont('Calibri',35) ;
     On = font.render('On', True, p.Color("Black"))
     Off = font.render('Off',True, p.Color("Black"));
+    fog = False
     while running:
         p.draw.rect(screen, p.Color("Green"), [410, 50, 80, 40])
         p.draw.rect(screen, p.Color("Red"), [410, 150, 80, 40])
@@ -407,8 +408,10 @@ def main():
                 if pos[0] > 400:
                     if pos[1] >= 50 and pos[1] <= 90:
                         print("On")
+                        fog = True
                     if pos[1] >= 150 and pos[1] <= 190:
                         print("Off")
+                        fog = False
                 elif AI == 0:
                     print("Starting MinMax Algo")
                     first, cord, moveTo = minmax(node,4, grid, -100000, 1000000)
@@ -444,7 +447,7 @@ def main():
                     else:
                         print("This is an invalid piece")
         clock.tick(15)
-        screen = drawBoard(screen, grid)
+        screen = drawBoard(screen, grid, fog)
         p.display.flip()
     if len(node.player) == 0 and len(node.agent) == 0:
         print("TIE!")
@@ -457,14 +460,19 @@ def main():
 
 
 # Draw board state
-def drawBoard(screen, grid):
+def drawBoard(screen, grid, fog):
     for r in range(D):
         for c in range(D):
             type = grid[r][c]
             if type[0] != "T":
-                p.draw.rect(screen, p.Color("White"),
-                            [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
-                loadPiece(screen, type[1], r, c)
+                if type[0] != "P" and fog:
+                    p.draw.rect(screen, p.Color("Grey"),
+                                [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize,
+                                 cellSize])
+                else:
+                    p.draw.rect(screen, p.Color("White"),
+                                [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
+                    loadPiece(screen, type[1], r, c)
             else:
                 if type[1] == "P":
                     p.draw.rect(screen, p.Color("Green"),
