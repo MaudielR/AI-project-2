@@ -194,13 +194,18 @@ def neighbors(x,y):
 
 def P_Wumpus(X, Y):
     global data_set
+    start = gameStart()
+
+    while start:
+        return 0
 
     #Before anyting Call funciton to see if there is a sing of Adjacent player
 
-    return 0;
+
         # return 1 if turn 1 not in first column
 
-    #W = int(data_set[X][Y][2])
+    W = int(data_set[X][Y][0])
+    Wumpus = 1 -(1/D) * W + 1/(D + )
         # Prime_of_W =
         # P_Wum = 1/D * data_set[X][Y][1]
         # return 0 if turn 1 and not in first row
@@ -216,17 +221,18 @@ def P_Hero(X, Y):
         #first we need to find true false variable for observation
         #ObVi= Observation(X,Y)
         # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
-        P_Wumpus = 1
-
-
-        return 0
+        global data_set
+        start = gameStart()
+        if not start:
+            return 0
 
 
 
 def P_Mage(X, Y):
-    P_Wumpus = 1
-
-    return 0 # return 1 if turn 1 not in first column
+    global data_set
+    start = gameStart()
+    if not start:
+        return 0  # return 1 if turn 1 not in first column
 
         # return 0 if turn 1 and not in first row
 
@@ -251,6 +257,64 @@ def scan(radius, cell):
             n.append(x)
     return n
 
+def neighbors(x,y,type):
+    global data_set
+    #Where neighbors(x,y) are the nodes within one move of (x,y)
+    Left =0
+    Right=0
+    up=0
+    down=0
+    upLeft=0
+    upRight=0
+    downLeft=0
+    downRight=0
+    if x-1 <0:
+        if y -1 < 0:
+            left=0
+            right= data_set[x][y+1][type]
+            down = data_set[x+1][y][type]
+            downLeft = 0
+            downRight = data_set[x+1][y+1][type]
+        elif y+1> D:
+            right = 0
+            left = data_set[x][y-1][type]
+            down = data_set[x+1][y][type]
+            downLeft = data_set[x+1][y-1][type]
+            downRight = 0
+        else:
+            Left = data_set[x][y-1][type]
+            Right = data_set[x][y+1][type]
+            down = data_set[x+1][y][type]
+            downLeft = data_set[x+1][y-1][type]
+            downRight = data_set[x+1][y+1][type]
+
+    if x+1 >D:
+
+        if y-1 <0:
+            left = 0
+            right = data_set[x][y + 1][type]
+            up=data_set[x-1][y][type]
+            down = 0
+            upLeft = 0
+            upRight = data_set[x-1][y +1][type]
+        elif y+1> 0:
+            right = 0
+            up = data_set[x - 1][y][type]
+            left = data_set[x][y-1][type]
+            upLeft = data_set[x-1][y -1][type]
+            upRight = 0
+        else:
+            Left = data_set[x][y-1][type]
+            Right = data_set[x][y+1][type]
+            up= data_set[x-1][y][type]
+            upLeft= data_set[x-1][y-1][type]
+            upRight= data_set[x-1][y+1][type]
+        return
+
+    for data_set[x][y] in range(x+1,y):
+    return data_set[][][0]
+
+
 def Observation(node,grid,X,Y):
     observations = {}
     playerArea = scan(1,[X,Y])
@@ -267,7 +331,8 @@ def Observation(node,grid,X,Y):
     return observations
 
 
-
+def gameStart():
+    return False
 
 
 def main():
@@ -276,6 +341,8 @@ def main():
     P_Hero(0, 0)
     P_Mage(0, 0)
     grid = buildGrid(D)
+
+    gameStart()
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in data_set]))
 
