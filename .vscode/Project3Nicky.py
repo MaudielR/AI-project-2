@@ -143,7 +143,7 @@ def P_Pits(D):
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
 
 
-def Neighbors(X,Y):
+#def Neighbors(X,Y):
 
 
 
