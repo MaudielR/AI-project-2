@@ -29,7 +29,7 @@ def buildGrid(D):
             row = random.randint(0, D - 1)
             if grid[row][col] == [P_Pits(D),"EE "]:
                 grid[row][col] = "TT "
-                pitLocation.add([row,col])
+                pitLocation.add((row,col))
                 pits -= 1
 
     count = 0
