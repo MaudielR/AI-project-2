@@ -1,13 +1,12 @@
-
 import math
 import pygame as p
-
 import random
 from itertools import product
 from pip._vendor.distlib.compat import raw_input
 
 print("What size board would you like?")
 global W, H, M, cellSize, valid, playerPieces, agentPieces, D, select, data_set
+switch = []
 pitLocation = set()
 width, height = 600, 600
 margin = 5
@@ -203,13 +202,9 @@ def P_Hero(X, Y,bool):
     #ObVi= Observation(X,Y)
     # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
     global data_set
-    start = gameStart()
-    if not start:
+    if switch == []:
         return 0
     # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
-    H = int(data_set[X][Y][0])
-    neighbor = neighbors(X, Y, 1)
-    Hero = 1 - (1 / D) * H + neighbor * 1 / (D * neighbor)
     if bool == False:
         H = int(data_set[X][Y][1])
         neighbor = neighbors(X, Y, 1)
@@ -220,17 +215,17 @@ def P_Hero(X, Y,bool):
         neighbor = neighbors(X, Y, 1)
         Hero = 1 - (1 / D) * H + neighbor * 1 / (D * neighbor) + .15
         data_set[X][Y][1] = Hero
-    return Hero
+        return Hero
 
 def P_Wumpus(X, Y,bool):
     global data_set
-    start = gameStart()
-    if not start:
+    if switch ==[]:
         return 0
     #check if position datta_set[x][y][3] == true
     #if so MAATH
     # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
     if bool == False:
+        return 0
         W = int(data_set[X][Y][0])
         neighbor= neighbors(X,Y,0)
         Wumpus = 1 -(1/D) * W + neighbor * 1/(D*neighbor)
@@ -240,17 +235,13 @@ def P_Wumpus(X, Y,bool):
         neighbor = neighbors(X, Y, 0)
         Wumpus = 1 - (1 / D) * W + neighbor * 1 / (D * neighbor) + .15
         data_set[X][Y][0] = Wumpus
-    return Wumpus
+        return Wumpus
 
 
 def P_Mage(X, Y,bool):
     global data_set
-    start = gameStart()
-    if not start:
+    if switch ==[]:
         return 0  # return 1 if turn 1 not in first column
-    M = int(data_set[X][Y][0])
-    neighbor = neighbors(X, Y, 1)
-    Mage = 1 - (1 / D) * M + neighbor * 1 / (D * neighbor)
     if bool == False:
         M = int(data_set[X][Y][2])
         neighbor = neighbors(X, Y, 2)
@@ -261,7 +252,7 @@ def P_Mage(X, Y,bool):
         neighbor = neighbors(X, Y, 2)
         Mage = 1 - (1 / D) * M + neighbor * 1 / (D * neighbor) + .15
         data_set[X][Y][2] = Mage
-    return Mage
+        return Mage
 
 def P_Pits(D):
     pits = (D / 3) - 1
@@ -407,7 +398,7 @@ def Observation(X,Y):
     if len(observations) >= 0:
         for obv in observations:
             r, c = obv
-            if data_set[X][Y][0] > 0:
+            if data_set[r][c][0] > 0:
                 P_Wumpus(r,c,True)
             else: P_Wumpus(X,Y,False)
             if data_set[r][c][1] > 0:
@@ -419,8 +410,7 @@ def Observation(X,Y):
                 P_Hero(X, Y, False)
 
 
-def gameStart():
-    return False
+
 # Assume these coords are always valid
 def moveAuto(cords, moveTo, grid, user):
     cR, cC = cords
@@ -525,7 +515,6 @@ def main():
 
     setGlobals(int(input()))
     grid = buildGrid(D)
-    gameStart()
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
     print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in data_set]))
     p.init()
@@ -541,6 +530,7 @@ def main():
     fog = False
     #Build_Decision_Tree(data_set,1)
     while running:
+        switch.append(True)
         p.draw.rect(screen, p.Color("Green"), [610, 50, 80, 40])
         p.draw.rect(screen, p.Color("Red"), [610, 150, 80, 40])
         screen.blit(On, (630, 55))
