@@ -210,6 +210,16 @@ def P_Hero(X, Y,bool):
     H = int(data_set[X][Y][0])
     neighbor = neighbors(X, Y, 1)
     Hero = 1 - (1 / D) * H + neighbor * 1 / (D * neighbor)
+    if bool == False:
+        H = int(data_set[X][Y][1])
+        neighbor = neighbors(X, Y, 1)
+        Hero = 1 - (1 / D) * H + neighbor * 1 / (D * neighbor)
+        data_set[X][Y][1] = Hero
+    elif bool == True:
+        H = int(data_set[X][Y][1])
+        neighbor = neighbors(X, Y, 1)
+        Hero = 1 - (1 / D) * H + neighbor * 1 / (D * neighbor) + .15
+        data_set[X][Y][1] = Hero
     return Hero
 
 def P_Wumpus(X, Y,bool):
@@ -220,10 +230,16 @@ def P_Wumpus(X, Y,bool):
     #check if position datta_set[x][y][3] == true
     #if so MAATH
     # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
-
-    W = int(data_set[X][Y][0])
-    neighbor= neighbors(X,Y,0)
-    Wumpus = 1 -(1/D) * W + neighbor * 1/(D*neighbor)
+    if bool == False:
+        W = int(data_set[X][Y][0])
+        neighbor= neighbors(X,Y,0)
+        Wumpus = 1 -(1/D) * W + neighbor * 1/(D*neighbor)
+        data_set[X][Y][0] = Wumpus
+    elif bool == True:
+        W = int(data_set[X][Y][0])
+        neighbor = neighbors(X, Y, 0)
+        Wumpus = 1 - (1 / D) * W + neighbor * 1 / (D * neighbor) + .15
+        data_set[X][Y][0] = Wumpus
     return Wumpus
 
 
@@ -235,6 +251,16 @@ def P_Mage(X, Y,bool):
     M = int(data_set[X][Y][0])
     neighbor = neighbors(X, Y, 1)
     Mage = 1 - (1 / D) * M + neighbor * 1 / (D * neighbor)
+    if bool == False:
+        M = int(data_set[X][Y][2])
+        neighbor = neighbors(X, Y, 2)
+        Mage = 1 - (1 / D) * M + neighbor * 1 / (D * neighbor)
+        data_set[X][Y][2] = Mage
+    elif bool == True:
+        M = int(data_set[X][Y][2])
+        neighbor = neighbors(X, Y, 2)
+        Mage = 1 - (1 / D) * M + neighbor * 1 / (D * neighbor) + .15
+        data_set[X][Y][2] = Mage
     return Mage
 
 def P_Pits(D):
@@ -381,13 +407,13 @@ def Observation(X,Y):
     if len(observations) >= 0:
         for obv in observations:
             r, c = obv
-            if (data_set[r][c][0] > 0):
+            if data_set[r][c][0] > 0:
                 P_Wumpus(r,c,True)
             else: P_Wumpus(r,c,False)
-            if(data_set[r][c][1] > 0):
+            if data_set[r][c][1] > 0:
                 P_Hero(r, c, True)
             else: P_Hero(r,c,False)
-            if (data_set[r][c][2] > 0):
+            if data_set[r][c][2] > 0:
                 P_Hero(r, c, True)
             else:
                 P_Hero(r, c, False)
@@ -534,14 +560,18 @@ def main():
                         print("Off")
                         fog = False
                 elif AI == 0:
-                    choosen = random.randint(0, len(agentPieces)-1)
+                    choosen = random.randint(0, len(agentPieces) - 1)
                     nC, nR = agentPieces[choosen]
-                    Observation(nC, nR)
-                    print("Starting MinMax Algo")
-                    moves = list(filter(lambda x: x not in agentPieces,scan(1,(nC,nR))))
-                    moveTo = moves[random.randint(0,len(moves)-1)]
+                    print("Starting AI")
+                    moves = list(filter(lambda x: x not in agentPieces, scan(1, (nC, nR))))
+                    while len(moves) == 0:
+                        choosen = random.randint(0, len(agentPieces) - 1)
+                        nC, nR = agentPieces[choosen]
+                        moves = list(filter(lambda x: x not in agentPieces, scan(1, (nC, nR))))
+                    moveTo = moves[random.randint(0, len(moves) - 1)]
                     moveAuto((nC, nR), moveTo, grid, "A")
                     AI += 1
+                    Observation(nC, nR)
                 else:
                     print("You may now select a piece")
                     pC = pos[0] // (cellSize + margin)
@@ -583,7 +613,7 @@ def main():
     p.quit
 # Draw board state
 def drawBoard(screen, grid, fog, probability):
-    font = p.font.SysFont('Calibri', 20);
+    font = p.font.SysFont('Calibri', 12);
     for r in range(D):
         for c in range(D):
             type = grid[r][c]
@@ -610,8 +640,8 @@ def drawBoard(screen, grid, fog, probability):
                     p.draw.rect(screen, p.Color("Grey"),
                                 [(margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize, cellSize])
                 loadPiece(screen, type[2], r, c)
-            prob = str(probability[r][c][0]) + "," + str(probability[r][c][1]) + "," + str(probability[r][c][2])
-            num = font.render(prob, True, p.Color("Red"))
+
+            num = font.render(str(probability[r][c]), True, p.Color("Red"))
             screen.blit(num, p.Rect((margin + cellSize) * c + margin, (margin + cellSize) * r + margin, cellSize,
                                     cellSize))
     return screen

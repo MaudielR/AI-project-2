@@ -41,7 +41,12 @@ def Version_Space_Update(V,e):
     G_set = []
     S_set = []
 
-    if e[0] or e[1] or e[2]
+    if (e[0] > .50) or (e[1] > .50) or (e[2] > .50):
+        S_set.append(e)
+    else:
+        G_set.append(e)
+
+
 
     '''These rules must be followed for S and B
     False positive for S,•: This means S, is too general, but there are no consistent specializations
