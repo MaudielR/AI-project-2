@@ -23,12 +23,12 @@ We decided to set the S_set with xxxx boundaries.
 
 #should take the matrix as the example case
 
-def Version_Space_Learning(Example_cases):
-    # how to get a set of all hypotheses? Might have to implement a move tracker/hypothesis tracker per move
+def Version_Space_Learning(data_set):
 
     #V = Set_of all hyoptheses
-    for examples in Example_cases:
-        if V is not empty:
+    V = ObservationList
+    for examples in data_set:
+        if V is not data_set:
             V = Version_Space_Update(V,examples)
     return V
 #returns and updated version of versionSpace
@@ -38,8 +38,10 @@ def Version_Space_Update(V,e):
     'the First step is to check the example and append to either B or S depending on qualifications'
     #G_set is defined as the general boundaries in the OVERALL set of examples
     #S_set is defined as the specific boundaries in the OVERALL set of Examples
-    G_set = {}
-    S_set = {}
+    G_set = []
+    S_set = []
+
+    if e[0] or e[1] or e[2]
 
     '''These rules must be followed for S and B
     False positive for S,•: This means S, is too general, but there are no consistent specializations
