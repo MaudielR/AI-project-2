@@ -101,7 +101,7 @@ def neighbors(x,y,type):
             down = data_set[x+1][y][type]
             downRight = data_set[x+1][y+1][type]
             problist.append(Right)
-            problist.append(Left)
+            problist.append(down)
             problist.append(downRight)
         elif y+1> D:
             Left = data_set[x][y-1][type]
@@ -268,9 +268,6 @@ def P_Pits(D):
 
 
 #def Neighbors(X,Y):
-
-
-
 
 
 
