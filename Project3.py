@@ -1,7 +1,7 @@
-import copy
+
 import math
 import pygame as p
-import numpy
+
 import random
 from itertools import product
 from pip._vendor.distlib.compat import raw_input
@@ -403,20 +403,20 @@ def neighbors(x,y,type):
 # Returns a string of all observations. If String length == 0 then there are no observations
 def Observation(X,Y):
     #Gets all cells which dont have
-    observations = list(filter(lambda x: x not in playerPieces,scan(1,[X,Y])))
+    observations = list(filter(lambda x: x not in agentPieces and x != (X,Y),scan(1,(X,Y))))
     if len(observations) >= 0:
         for obv in observations:
             r, c = obv
-            if data_set[r][c][0] > 0:
+            if data_set[X][Y][0] > 0:
                 P_Wumpus(r,c,True)
-            else: P_Wumpus(r,c,False)
+            else: P_Wumpus(X,Y,False)
             if data_set[r][c][1] > 0:
                 P_Hero(r, c, True)
-            else: P_Hero(r,c,False)
+            else: P_Hero(X,Y,False)
             if data_set[r][c][2] > 0:
                 P_Hero(r, c, True)
             else:
-                P_Hero(r, c, False)
+                P_Hero(X, Y, False)
 
 
 def gameStart():
@@ -571,7 +571,8 @@ def main():
                     moveTo = moves[random.randint(0, len(moves) - 1)]
                     moveAuto((nC, nR), moveTo, grid, "A")
                     AI += 1
-                    Observation(nC, nR)
+                    mC,mR = moveTo
+                    Observation(mC, mR)
                 else:
                     print("You may now select a piece")
                     pC = pos[0] // (cellSize + margin)
