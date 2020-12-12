@@ -60,23 +60,6 @@ def buildGrid(D):
 # Builds a Grid where EE is Empty and TT is for Pit, Agent occupies the top row and Player occupies the bottom row
 
 
-def P_Wumpus(X, Y):
-
-    #Before anyting Call funciton to see if there is a sing of Adjacent player
-    ObVi = Observation(X, Y)
-    P_Wumpus = 1
-    if X == 0 and Y == 0:
-        return 0
-
-    else:
-
-        return P_Wumpus
-        # return 1 if turn 1 not in first column
-
-        # return 0 if turn 1 and not in first row
-
-        # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
-
 
 #Scans a radius around the cell. Radius of 1 is 3x3, radius of 2 is 5x5
 def scan(radius, cell):
@@ -228,29 +211,47 @@ def neighbors(x,y,type):
     return prob
 
 
+def P_Wumpus(X, Y):
 
-def P_Hero(X, Y):
-        #first we need to find true false variable for observation
-        ObVi= Observation(X,Y)
-        probability = 0
-        # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
-        P_Wumpus = 1
-        if X == 0 and Y == 0:
-            return 0
-        else:
-            P_Wumpus = (1 - (1 / len(agentPieces)))*P_Wumpus + Neighbors(X, Y)
-            return P_Wumpus
-
-
-
-def P_Mage(X, Y):
+    #Before anyting Call funciton to see if there is a sing of Adjacent player
+    ObVi = Observation(X, Y)
     P_Wumpus = 1
     if X == 0 and Y == 0:
         return 0
 
     else:
-        return P_Wumpus # return 1 if turn 1 not in first column
+        P_Hero = (1 - (1 / len(agentPieces))) * P_Wumpus + neighbors(X, Y)
+        Observation(node, X, Y)
+        return P_Hero
+        # return 1 if turn 1 not in first column
 
+        # return 0 if turn 1 and not in first row
+
+        # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
+
+
+def P_Hero(X, Y):
+        #first we need to find true false variable for observation
+        ObVi= Observation(X,Y)
+        # 2 return this P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
+        P_Hero = data_set[X][Y][1]
+        if X == 0 and Y == 0:
+            return 0
+        else:
+            P_Hero = (1 - (1 / len(agentPieces)))*P_Hero + neighbors(X, Y)
+            Observation(node, X, Y)
+            return P_Hero
+
+
+def P_Mage(X, Y):
+    P_Mage = data_set[X][Y][2]
+    if X == 0 and Y == 0:
+        return 0
+
+    else:
+        P_Mage = (1 - (1 / len(agentPieces))) * P_Mage + neighbors(X, Y)
+        Observation(node, X, Y)
+        return P_Mage
         # return 0 if turn 1 and not in first row
 
         # P'(Wx,y) = (1-1/c)*P'(Wx, y) + (x',y)(neighbors(x,y)P(Wx', y') *P(Wx,y|Wx', y')
