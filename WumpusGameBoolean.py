@@ -5,31 +5,6 @@ import pandas as pd
 
 # global data set contains values of Player1, AI, Weighted_values, True false narratives based on pieces and values
 # ex: player Wampus 'PW' -> AI wumpus 'AW' kille each other = 0 gain, negative outcome = FALSE
-data_set = [
-    ['PW', 'AW', 0, False],
-    ['PW', 'AH', -1, False],
-    ['PW', 'AM', +1, True],
-    ['PH', 'AW', +1, True],
-    ['PH', 'AH', 0, False],
-    ['PH', 'AM', -1, False],
-    ['PM', 'AW', -1, False],
-    ['PM', 'AH', +1, True],
-    ['PM', 'AM', 0, False],
-    ['AW', 'PW', 0, True],
-    ['AW', 'PH', -1, False],
-    ['AW', 'PM', +1, True],
-    ['AH', 'PW', +1, True],
-    ['AH', 'PH', 0, False],
-    ['AH', 'PM', -1, False],
-    ['AM', 'PW', -1, False],
-    ['AM', 'PH', +1, True],
-    ['AM', 'AM', 0, False],
-    ['PW', 'TT', -1, False],
-    ['PH', 'TT', -1, False],
-    ['PM', 'TT', -1, False],
-    ['AW', 'TT', -1, False],
-    ['AH', 'TT', -1, False],
-    ['AM', 'TT', -1, False]]
 
 
 # this return the value sets of columns such as player columns or Weighted values, or Boolean outcomes
@@ -87,10 +62,6 @@ class Question:
             return val == self.value
 
 
-def is_numeric(value):
-    """Test if a value is numeric."""
-    return isinstance(value, int) or isinstance(value, float)
-
 
 def partition(rows, question):
     """Partitions a dataset.
@@ -108,34 +79,7 @@ def partition(rows, question):
     return true_rows, false_rows
 
 
-# this is the grid and at the same time the table?
-def buildGrid(D):
-    grid = [["EE " for i in range(D)] for j in range(D)]
 
-    for col in range(1, D - 1):
-        pits = (D / 3) - 1
-        while pits != 0:
-            row = random.randint(0, D - 1)
-            if grid[row][col] == "EE ":
-                grid[row][col] = "TT "
-                pits -= 1
-
-    count = 0
-    for row in range(0, D):
-        if count == 0:
-            grid[0][row] = "AW "
-            grid[D - 1][row] = "PW "
-            count += 1
-        elif count == 1:
-            grid[0][row] = "AH "
-            grid[D - 1][row] = "PH "
-            count += 1
-        else:
-            grid[0][row] = "AM "
-            grid[D - 1][row] = "PM "
-            count = 0
-
-    return grid
 
 
 def class_counts(grid):
@@ -162,9 +106,6 @@ def gini(grid):
     return impurity
 
 
-# Function to split the dataset
-def splitdataset(balance_data):
-    return balance_data
 
 
 # Function to perform training with entropy.
@@ -227,35 +168,7 @@ def info_gain(left, right, current_uncertainty):
 # Decision Tree
 # S = turns taken? or set of Elements not sure
 # not sure What attributes are or how to define them
-def Build_Decision_Tree(grid, attributes):
-    variable_for_each_observation, variable_for_each_item = find_best_split(attributes)
-
-    # base case no info gain
-    if variable_for_each_observation == 0:
-        return Leaf(attributes)
-    if data_set == {}:
-        return
-    else:
-        # BestGain =Information_Gain(data_set, A)
-        info_gain(left,right,current_uncertianty)= -1;
-        for a in attributes:
-            S_prime = grid / a;
-            if info_gain(left=,right=,current_uncertainty=) > info_gain(left=,right=,current_uncertainty=):
-                IGbest = IGbest(grid)
-                a_best = a
-        S_prime = data_set / a
-        for all in S_prime:
-            Build_Decision_Tree(S_prime, attributes / a_best)
 
 
-def main():
-    # Building Phase
-    grid = buildGridTree(9)
-    print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in grid]))
-
-
-# Calling main function
-if __name__ == "__main__":
-    main()
 
 
